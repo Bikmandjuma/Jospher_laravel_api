@@ -6,7 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\ForgotPSWD\ForgotPasswordController;
-
+use App\Http\Controllers\SocialiteController;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -16,6 +16,11 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');
     Route::post('logout', 'logout');
 });
+
+//Login by social media(ex : google)
+
+Route::get('auth/google', [SocialiteController::class, 'login_by_google']);
+Route::get('auth/google/callback', [SocialiteController::class, 'login_by_google_callback']);
 
 //Admin
 Route::group(['prefix' => 'admin','middleware' => 'adminauth'], function () {

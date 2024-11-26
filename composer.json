@@ -10,6 +10,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.54",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.5",
         "php-open-source-saver/jwt-auth": "^2.0",
         "tymon/jwt-auth": "^1.0@dev"
