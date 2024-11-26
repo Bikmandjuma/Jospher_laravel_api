@@ -19,9 +19,9 @@ use App\Models\User;
 /**
  * @OA\OpenApi(
  *     @OA\Info(
- *         title="Your API Title",
+ *         title="Jospher",
  *         version="1.0.0",
- *         description="API Description"
+ *         description="Jospher_API Description"
  *     )
  * )
  */

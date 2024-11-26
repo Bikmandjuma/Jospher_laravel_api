@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Your API Title",
-        "description": "API Description",
+        "title": "Jospher",
+        "description": "Jospher_API Description",
         "version": "1.0.0"
     },
     "paths": {
@@ -78,7 +78,7 @@
                                         },
                                         "wrong_Cred": {
                                             "type": "string",
-                                            "example": "Wrong credentials , try again !"
+                                            "example": "Wrong credentials, try again!"
                                         }
                                     },
                                     "type": "object"
@@ -86,12 +86,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
+                }
             }
         },
         "/api/logout": {
