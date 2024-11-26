@@ -36,47 +36,57 @@ class AuthController extends Controller
     }
 
     /**
-     * @OA\Post(
-     *     path="/api/login",
-     *     summary="Login",
-     *     description="User login. Returns a token if successful.",
-     *     operationId="login",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 type="object",
-     *                 required={"email", "password"},
-     *                 @OA\Property(property="email", type="string", format="email"),
-     *                 @OA\Property(property="password", type="string", format="password"),
-     *             )
-     *         )
+     *  * @OA\Post(
+     * path="/api/login",
+     * summary="Sign in",
+     * description="Login by email, password",
+     * operationId="authLogin",
+     * tags={"Authentication"}, 
+     *      @OA\Parameter(
+     *          name="email",
+     *          description="use email",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *       ),
+     *      @OA\Parameter(
+     *          name="password",
+     *          description="use password",
+     *          required=true,
+     *          in="query",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successfull logged in."
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Login successful",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="User success login"),
-     *             @OA\Property(property="user_data", type="object"),
-     *             @OA\Property(property="authorisation", type="object", 
-     *                 @OA\Property(property="token", type="string"),
-     *                 @OA\Property(property="type", type="string")
-     *             ),
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Wrong credentials",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="error"),
-     *             @OA\Property(property="wrong_Cred", type="string", example="Wrong credentials , try again !")
-     *         )
-     *     ),
+     *      @OA\Response(
+     *          response=204,
+     *          description="Successful operation",
+     *          @OA\JsonContent()
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad user Input",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Resource Not Found"
+     *      )
      * )
      */
-
 
     public function login(Request $request){
 
@@ -120,24 +130,6 @@ class AuthController extends Controller
             ], 401);
         }
     }
-
-
-    /**
-     * @OA\Post(
-     *     path="/api/logout",
-     *     summary="Logout",
-     *     description="Logs out the user and invalidates the session/token.",
-     *     operationId="logout",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Logout successful",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="logout_message", type="string", example="Successfully logged out")
-     *         )
-     *     ),
-     * )
-     */
 
     public function logout()
     {
