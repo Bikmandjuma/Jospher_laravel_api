@@ -7,14 +7,22 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 /**
- * @OA\Info(
- *     title="API Documentation",
- *     version="1.0.0",
- *     description="This is the API documentation for Job-sphere-rda system",
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+ *     description="JWT Authorization"
  * )
- * @OA\Server(
- *     url=L5_SWAGGER_CONST_HOST,
- *     description="API Server"
+ */
+
+/**
+ * @OA\OpenApi(
+ *     @OA\Info(
+ *         title="Your API Title",
+ *         version="1.0.0",
+ *         description="API Description"
+ *     )
  * )
  */
 
@@ -24,7 +32,7 @@ class AuthController extends Controller
     public function __construct()
     {
         // $this->middleware('auth:api', ['except' => ['login','register']]);
-        $this->middleware('guest', ['except' => ['username','password']]);
+        $this->middleware('guest', ['except' => ['email','password']]);
     }
 
     /**
@@ -33,14 +41,15 @@ class AuthController extends Controller
      *     summary="Login",
      *     description="User login. Returns a token if successful.",
      *     operationId="login",
+     *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *                 required={"username", "password"},
-     *                 @OA\Property(property="username", type="string", format="email"),
+     *                 required={"email", "password"},
+     *                 @OA\Property(property="email", type="string", format="email"),
      *                 @OA\Property(property="password", type="string", format="password"),
      *             )
      *         )
@@ -68,51 +77,50 @@ class AuthController extends Controller
      * )
      */
 
-    public function login(Request $request)
-    {
+
+    public function login(Request $request){
+
         $request->validate([
-            'username' => 'required|string|email',
+            'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
         
-        $credentials = $request->only('username', 'password','remember');
-        $admin_token=auth::guard('admin')->attempt($credentials);
-        $user_token=auth::guard('user')->attempt($credentials);
+        $credentials = $request->only('email', 'password');
+        
+        // Debugging log to see what credentials are being passed
+        \Log::info('Login credentials:', $credentials);
+
+        $admin_token = auth::guard('admin')->attempt($credentials);
+        $user_token = auth::guard('user')->attempt($credentials);
+
         if ($admin_token) {
-            
             $admin = auth::guard('admin')->user();
             return response()->json([
-                    'status' => 'Admin success login',
-                    'admin_data' => $admin,
-                    'authorisation' => [
-                        'token' => $admin_token,
-                        'type' => 'bearer',
-                    ]
-            ],200);            
-                    
-        
-        }elseif($user_token){
-
+                'status' => 'Admin success login',
+                'admin_data' => $admin,
+                'authorisation' => [
+                    'token' => $admin_token,
+                    'type' => 'bearer',
+                ]
+            ], 200);
+        } elseif ($user_token) {
             $user = auth::guard('user')->user();
             return response()->json([
-                    'status' => 'User success login',
-                    'user_data' => $user,
-                    'authorisation' => [
-                        'token' => $user_token,
-                        'type' => 'bearer',
-                    ]
-            ],200);
-
-        }else{
+                'status' => 'User success login',
+                'user_data' => $user,
+                'authorisation' => [
+                    'token' => $user_token,
+                    'type' => 'bearer',
+                ]
+            ], 200);
+        } else {
             return response()->json([
                 'status' => 'error',
-                'wrong_Cred' => 'Wrong credentials , try again !',
-            ],401);
-
+                'wrong_Cred' => 'Wrong credentials, try again!',
+            ], 401);
         }
-
-
     }
+
 
     /**
      * @OA\Post(

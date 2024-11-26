@@ -15,20 +15,21 @@ class AdminSeeder extends Seeder
     {
         $admin = [
             [
-               'firstname'=>'Bikman',
-               'lastname'=>'Djuma',
-               'email'=>'indexzero900@gmail.com',
-               'phone'=>'0787943106',
-               'gender'=>'male',
-               'dob'=>'2020-05-16',
-               'image'=>'user.png',
-               'username'=>'admin@gmail.com',
-               'password'=> bcrypt('admin123@'),
+                'firstname' => 'Bikman',
+                'lastname' => 'Djuma',
+                'email' => 'indexzero900@gmail.com',
+                'phone' => '0787943106',
+                'gender' => 'male',
+                'dob' => '2020-05-16',
+                'image' => 'user.png',
+                'email' => 'admin@gmail.com',
+                'password' => bcrypt('admin123@'),
             ],
         ];
-    
+
         foreach ($admin as $key => $user) {
             admin::create($user);
         }
+        
     }
 }
