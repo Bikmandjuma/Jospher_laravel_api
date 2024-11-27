@@ -24,3 +24,5 @@ RUN chmod -R 777 storage bootstrap/cache
 # Expose port 8000 and set the command
 EXPOSE 8000
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+
+RUN composer update --no-dev --optimize-autoloader
