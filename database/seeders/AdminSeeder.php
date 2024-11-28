@@ -22,7 +22,6 @@ class AdminSeeder extends Seeder
                 'gender' => 'male',
                 'dob' => '2020-05-16',
                 'image' => 'user.png',
-                'username' => 'admin@gmail.com',
                 'password' => bcrypt('admin123@'),
             ],
         ];

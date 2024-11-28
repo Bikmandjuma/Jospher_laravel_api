@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class PartialUserRegister extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'names',
+        'email',
+        'password',
+    ];
 }

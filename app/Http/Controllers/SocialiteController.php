@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Exception;
 use App\Models\SocialiteUser;
+use App\Models\User;
 
 class SocialiteController extends Controller
 {
@@ -16,6 +17,7 @@ class SocialiteController extends Controller
         return Socialite::driver('google')->stateless()->redirect();
     }
 
+    
     public function login_by_google_callback(){
         try {
             $user = Socialite::driver('google')->stateless()->user();
@@ -31,7 +33,11 @@ class SocialiteController extends Controller
                 return redirect('http://192.168.0.82:8000/user/dashboard?token=' . $token);
             }
 
-            // Create new user
+            // Get profile picture (avatar)
+            $profilePicture = $user->avatar; 
+            $birthdate = isset($user->user['birthday']) ? $user->user['birthday'] : null;
+
+            // Create new user with profile picture
             $newUser = SocialiteUser::create([
                 'names' => $user->name,
                 'provider_name' => 'Google',
@@ -39,14 +45,27 @@ class SocialiteController extends Controller
                 'provider_email' => $user->email,
             ]);
 
+            User::create([
+                'socialite_user_id' => $newUser->id,
+                'names' => $user->name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'gender' => $user->gender,
+                'dob' => $birthdate,
+                'image' => $profilePicture,
+            ]);
+
             // Generate JWT token for the new user
             $token = Auth::guard('api')->login($newUser);
 
             // Redirect to Flask app with token
             return redirect('http://192.168.0.82:8000/user/dashboard?token=' . $token);
+
         } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
+
+
     }
 
     

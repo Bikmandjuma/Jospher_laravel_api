@@ -15,7 +15,10 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('socialite_user_id');
             $table->string('names');
+            $table->string('firstname')->nullable();
+            $table->string('lastname')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->unique()->nullable();
             $table->string('gender')->nullable();
@@ -23,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('image')->nullable();
             $table->string('username')->nullable();
             $table->string('password')->nullable();
+            $table->foreign('socialite_user_id')->references('id')->on('socialite_users')->onDelete('cascade');
             $table->timestamps();
         });
     }

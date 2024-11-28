@@ -17,10 +17,10 @@ class CreateUserAddressesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('country')->default('Rwanda');
-            $table->string('province');
-            $table->string('district');
-            $table->string('sector');
-            $table->string('cell');
+            $table->string('province')->nullable();
+            $table->string('district')->nullable();
+            $table->string('sector')->nullable();
+            $table->string('cell')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
