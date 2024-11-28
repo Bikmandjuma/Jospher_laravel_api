@@ -16,7 +16,6 @@ class SocialiteController extends Controller
     {
         return Socialite::driver('google')->stateless()->redirect();
     }
-
     
     public function login_by_google_callback(){
         try {
@@ -64,7 +63,6 @@ class SocialiteController extends Controller
         } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-
 
     }
 

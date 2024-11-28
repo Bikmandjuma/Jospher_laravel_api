@@ -31,9 +31,9 @@ return [
     ],
 
     'google' => [
-        'client_id' => env('OAUTH_CLIENT_ID'),
-        'client_secret' => env('OAUTH_CLIENT_SECRET'),
-        'redirect' => env('OAUTH_AUTHORIZE_URL'),
+        'client_id' => '472408974890-6m1k3796mi4lfetoss8a5qhveahse948.apps.googleusercontent.com',
+        'client_secret' => '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',
+        'redirect' => 'https://jobsphererdaapi-production.up.railway.app/auth/google/callback',
     ],
 
 ];
