@@ -31,9 +31,10 @@ return [
     ],
 
     'google' => [
-        'client_id' => '472408974890-6m1k3796mi4lfetoss8a5qhveahse948.apps.googleusercontent.com',
-        'client_secret' => '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',
-        'redirect' => 'https://jobsphererdaapi-production.up.railway.app/api/auth/google/callback',
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
+
 
 ];
