@@ -46,14 +46,14 @@ class SocialiteController extends Controller
             ]);
 
             // Create the corresponding User
-            User::create([
-                'names' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'gender' => $user->gender,
-                'dob' => $birthdate,
-                'image' => $profilePicture,
-            ]);
+            // User::create([
+            //     'names' => $user->name,
+            //     'email' => $user->email,
+            //     'phone' => $user->phone,
+            //     'gender' => $user->gender,
+            //     'dob' => $birthdate,
+            //     'image' => $profilePicture,
+            // ]);
 
             $token = Auth::guard('api')->login($newUser);
 
