@@ -19,8 +19,8 @@ class CreateUsersTable extends Migration
             $table->id();
 
             // Foreign key referencing the socialite_users table
-            $table->unsignedBigInteger('socialite_user_id');
-            $table->foreign('socialite_user_id')->references('id')->on('socialite_users')->onDelete('cascade');
+            // $table->unsignedBigInteger('socialite_user_id');
+            // $table->foreign('socialite_user_id')->references('id')->on('socialite_users')->onDelete('cascade');
 
             // User fields
             $table->string('names');
@@ -38,7 +38,7 @@ class CreateUsersTable extends Migration
             $table->timestamps();
 
             // Index for faster lookups on socialite_user_id
-            $table->index('socialite_user_id');
+            // $table->index('socialite_user_id');
         });
     }
 

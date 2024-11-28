@@ -18,11 +18,6 @@ class SocialiteUser extends Authenticatable implements JWTSubject
         'provider_email',
     ];
 
-     public function users()
-    {
-        return $this->hasOne(User::class);
-    }
-    
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      */

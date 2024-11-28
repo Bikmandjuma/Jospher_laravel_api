@@ -17,7 +17,7 @@ class SocialiteController extends Controller
     {
         return Socialite::driver('google')->stateless()->scopes(['email', 'profile', 'openid'])->redirect();
     }
-    
+
     public function login_by_google_callback(Request $request)
     {
         try {
@@ -47,7 +47,6 @@ class SocialiteController extends Controller
 
             // Create the corresponding User
             User::create([
-                'socialite_user_id' => $newUser->id,
                 'names' => $user->name,
                 'email' => $user->email,
                 'phone' => $user->phone,

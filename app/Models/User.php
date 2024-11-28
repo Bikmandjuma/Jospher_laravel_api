@@ -15,7 +15,7 @@ class User extends Authenticatable implements JWTSubject
     
     use HasFactory,Notifiable;
     protected $fillable = [
-        'socialite_user_id',
+        // 'socialite_user_id',
         'names',
         'firstname',
         'lastname',
@@ -27,11 +27,6 @@ class User extends Authenticatable implements JWTSubject
         'username',
         'password',
     ];
-
-    public function socialiteUser()
-    {
-        return $this->belongsTo(SocialiteUser::class, 'socialite_user_id');
-    }
 
     /**
      * The attributes that should be hidden for arrays.
