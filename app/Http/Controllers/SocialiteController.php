@@ -14,7 +14,8 @@ class SocialiteController extends Controller
 {
     public function login_by_google()
     {
-        return Socialite::driver('google')->stateless()->redirect();
+        return Socialite::driver('google')->redirect();
+        // ->stateless()
     }
     
     public function login_by_google_callback(){
