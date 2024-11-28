@@ -14,13 +14,12 @@ class SocialiteController extends Controller
 {
     public function login_by_google()
     {
-        return Socialite::driver('google')->redirect();
-        // ->stateless()
+        return Socialite::driver('google')->stateless()->redirect();
     }
     
     public function login_by_google_callback(){
         try {
-            $user = Socialite::driver('google')->user();
+            $user = Socialite::driver('google')->stateless()->user();
 
             // Check if user exists
             $existingUser = SocialiteUser::where('provider_id', $user->id)->first();
