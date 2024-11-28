@@ -85,7 +85,7 @@ class ManagerController extends Controller
         
     }
 
-    public function testDatabaseConnection()
+    public function testDatabaseConnection(Request $request)
     {
 
         $request->validate([
