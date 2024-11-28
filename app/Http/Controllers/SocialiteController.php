@@ -29,7 +29,7 @@ class SocialiteController extends Controller
                 $token = Auth::guard('api')->login($existingUser);
 
                 // Redirect to Flask app with token
-                return redirect('http://192.168.0.82:8000/user/dashboard?token=' . $token);
+                return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
             }
 
             // Get profile picture (avatar)
@@ -58,7 +58,7 @@ class SocialiteController extends Controller
             $token = Auth::guard('api')->login($newUser);
 
             // Redirect to Flask app with token
-            return redirect('http://192.168.0.82:8000/user/dashboard?token=' . $token);
+            return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
 
         } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
