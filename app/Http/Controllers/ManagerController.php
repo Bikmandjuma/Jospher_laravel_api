@@ -85,29 +85,29 @@ class ManagerController extends Controller
         
     }
 
-    public function testDatabaseConnection(Request $request)
+    public function testDatabaseConnection()
     {
 
-        $request->validate([
-            'names' => 'required|string',
-            'provider_name' => 'required|string',
-            'provider_id' => 'required|string|',
-            'provider_email' => 'required|string|email|max:255|unique:socialite_users',
-        ]);
+        $id = rand(1,10);
+        $email = rand(1,10);
 
         SocialiteUser::create([
             'names' => "nam 1" ,
             'provider_name' => "Github" ,
-            'provider_id' => "2" ,
-            'provider_email' => "name@gmail.com"
+            'provider_id' => "2".$id."" ,
+            'provider_email' => "name".$email."@gmail.com"
         ]);
 
-        try {
-            DB::connection()->getPdo();
-            return response()->json(['message' => 'Database connection is successful!']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Could not connect to the database. Please check your configuration.']);
-        }
+        return response()->json([
+            'message' => "new data added in socialite user model !"
+        ]);
+
+        // try {
+        //     DB::connection()->getPdo();
+        //     return response()->json(['message' => 'Database connection is successful!']);
+        // } catch (\Exception $e) {
+        //     return response()->json(['message' => 'Could not connect to the database. Please check your configuration.']);
+        // }
     }
 
 
