@@ -27,6 +27,11 @@ class User extends Authenticatable implements JWTSubject
         'password',
     ];
 
+    public function socialiteUser()
+    {
+        return $this->belongsTo(SocialiteUser::class, 'socialite_user_id');
+    }
+    
     /**
      * The attributes that should be hidden for arrays.
      *
