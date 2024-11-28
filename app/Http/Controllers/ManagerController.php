@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\customer;
+use Illuminate\Support\Facades\DB;
 
 class ManagerController extends Controller
 {
