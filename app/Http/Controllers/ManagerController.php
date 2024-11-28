@@ -87,11 +87,19 @@ class ManagerController extends Controller
 
     public function testDatabaseConnection()
     {
+
+        $request->validate([
+            'names' => 'required|string',
+            'provider_name' => 'required|string',
+            'provider_id' => 'required|string|',
+            'provider_email' => 'required|string|email|max:255|unique:socialite_users',
+        ]);
+
         SocialiteUser::create([
             'names' => "nam 1" ,
-            'provider_name' => "google" ,
-            'provider_id' => "1" ,
-            'provider_email' => "nam@gmail.com"
+            'provider_name' => "Github" ,
+            'provider_id' => "2" ,
+            'provider_email' => "name@gmail.com"
         ]);
 
         try {
