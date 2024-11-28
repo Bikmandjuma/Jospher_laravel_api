@@ -19,7 +19,7 @@ class SocialiteController extends Controller
     
     public function login_by_google_callback(){
         try {
-            $user = Socialite::driver('google')->stateless()->user();
+            $user = Socialite::driver('google')->user();
 
             // Check if user exists
             $existingUser = SocialiteUser::where('provider_id', $user->id)->first();
@@ -29,7 +29,7 @@ class SocialiteController extends Controller
                 $token = Auth::guard('api')->login($existingUser);
 
                 // Redirect to Flask app with token
-                return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
+                return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard');
             }
 
             // Get profile picture (avatar)
@@ -58,7 +58,7 @@ class SocialiteController extends Controller
             $token = Auth::guard('api')->login($newUser);
 
             // Redirect to Flask app with token
-            return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
+            return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard');
 
         } catch (Exception $e) {
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
