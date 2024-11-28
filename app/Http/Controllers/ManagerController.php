@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\customer;
 use Illuminate\Support\Facades\DB;
-use App\Models\SocialiteUser;
 
 class ManagerController extends Controller
 {
@@ -87,16 +86,6 @@ class ManagerController extends Controller
 
     public function testDatabaseConnection()
     {
-        $id = rand(1,100);
-        $email = 'test'.$id.'@gmail.com';
-
-        SocialiteUser::create([
-            'names' => "name",
-            'provider_name' => 'Google',
-            'provider_id' => $id,
-            'provider_email' => $email,
-        ]);
-
         try {
             DB::connection()->getPdo();
             return response()->json(['message' => 'Database connection is successful!']);

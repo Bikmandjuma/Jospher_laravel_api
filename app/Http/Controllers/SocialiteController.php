@@ -9,7 +9,6 @@ use Laravel\Socialite\Facades\Socialite;
 use Exception;
 use App\Models\SocialiteUser;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 class SocialiteController extends Controller
 {
@@ -44,17 +43,7 @@ class SocialiteController extends Controller
                 'provider_id' => $user->id,
                 'provider_email' => $user->email,
             ]);
-
-            // Create the corresponding User
-            // User::create([
-            //     'names' => $user->name,
-            //     'email' => $user->email,
-            //     'phone' => $user->phone,
-            //     'gender' => $user->gender,
-            //     'dob' => $birthdate,
-            //     'image' => $profilePicture,
-            // ]);
-
+            
             $token = Auth::guard('api')->login($newUser);
 
             return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
