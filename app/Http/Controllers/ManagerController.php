@@ -83,5 +83,15 @@ class ManagerController extends Controller
         
     }
 
+    public function testDatabaseConnection()
+    {
+        try {
+            DB::connection()->getPdo();
+            return response()->json(['message' => 'Database connection is successful!']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Could not connect to the database. Please check your configuration.']);
+        }
+    }
+
 
 }

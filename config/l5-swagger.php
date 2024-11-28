@@ -260,12 +260,19 @@ return [
                  */
                 'persist_authorization' => env('L5_SWAGGER_UI_PERSIST_AUTHORIZATION', false),
 
+                // 'oauth2' => [
+                //     'use_pkce_with_authorization_code_grant' => false,
+                // ],
+
                 'oauth2' => [
-                    /*
-                     * If set to true, adds PKCE to AuthorizationCodeGrant flow
-                     */
-                    'use_pkce_with_authorization_code_grant' => false,
+                    'enabled' => true,
+                    'client_id' => env('OAUTH_CLIENT_ID'),
+                    'client_secret' => env('OAUTH_CLIENT_SECRET'),
+                    'authorize_url' => env('OAUTH_AUTHORIZE_URL'),
+                    'token_url' => env('OAUTH_TOKEN_URL'),
+                    'scopes' => ['read', 'write'], // Define your API scopes here
                 ],
+                
             ],
         ],
         /*

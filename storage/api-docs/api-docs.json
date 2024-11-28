@@ -76,7 +76,7 @@
                 "flows": {
                     "authorizationCode": {
                         "authorizationUrl": null,
-                        "tokenUrl": null,
+                        "tokenUrl": "https://jobsphererdaapi-production.up.railway.app/token",
                         "scopes": []
                     }
                 }
