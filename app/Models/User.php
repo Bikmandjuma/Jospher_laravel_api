@@ -19,6 +19,7 @@ class User extends Authenticatable implements JWTSubject
         'names',
         'firstname',
         'lastname',
+        'gender',
         'email',
         'phone',
         'dob',
@@ -31,7 +32,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(SocialiteUser::class, 'socialite_user_id');
     }
-    
+
     /**
      * The attributes that should be hidden for arrays.
      *

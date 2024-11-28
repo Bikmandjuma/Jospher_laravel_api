@@ -9,6 +9,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Exception;
 use App\Models\SocialiteUser;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class SocialiteController extends Controller
 {
@@ -16,29 +17,27 @@ class SocialiteController extends Controller
     {
         return Socialite::driver('google')->stateless()->scopes(['email', 'profile', 'openid'])->redirect();
     }
-
+    
     public function login_by_google_callback(Request $request)
     {
         try {
-            // Retrieve user from Google
             $user = Socialite::driver('google')->stateless()->user();
 
-            // Check if user exists in SocialiteUser model
+            // Log the user data received from Google
+            Log::info('Google user data:', $user->toArray());
+
             $existingUser = SocialiteUser::where('provider_id', $user->id)->first();
 
             if ($existingUser) {
-                // Generate JWT token for existing user
                 $token = Auth::guard('api')->login($existingUser);
 
-                // Redirect to Flask app with token
                 return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
             }
 
-            // Get additional profile information from Google
-            $profilePicture = $user->avatar; 
+            $profilePicture = $user->avatar;
             $birthdate = isset($user->user['birthday']) ? $user->user['birthday'] : null;
 
-            // Create new user in SocialiteUser model
+            // Create a new SocialiteUser
             $newUser = SocialiteUser::create([
                 'names' => $user->name,
                 'provider_name' => 'Google',
@@ -46,7 +45,7 @@ class SocialiteController extends Controller
                 'provider_email' => $user->email,
             ]);
 
-            // Create corresponding user in the main User model
+            // Create the corresponding User
             User::create([
                 'socialite_user_id' => $newUser->id,
                 'names' => $user->name,
@@ -57,15 +56,15 @@ class SocialiteController extends Controller
                 'image' => $profilePicture,
             ]);
 
-            // Generate JWT token for the new user
             $token = Auth::guard('api')->login($newUser);
 
-            // Redirect to Flask app with token
             return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
         } catch (Exception $e) {
-            // Log and return error message
-            \Log::error('Google login error: ' . $e->getMessage());
+            Log::error('Google login error: ' . $e->getMessage());
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
+
+
+    
 }
