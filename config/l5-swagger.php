@@ -175,82 +175,23 @@ return [
         /*
          * API security definitions. Will be generated into documentation file.
         */
+
         'securityDefinitions' => [
-           
-
             'securitySchemes' => [
-
-                'bearerAuth' => [
-                    'type' => 'apiKey',
-                    'name' => 'Authorization',
-                    'in' => 'header',
-                    'description' => 'JWT Authorization header using the Bearer scheme.',
-                ],
-
-                /*
-                 * Examples of Security schemes
-                 */
-                /*
-                'api_key_security_example' => [ // Unique name of security
-                    'type' => 'apiKey', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
-                    'description' => 'A short description for security scheme',
-                    'name' => 'api_key', // The name of the header or query parameter to be used.
-                    'in' => 'header', // The location of the API key. Valid values are "query" or "header".
-                ],
-                'oauth2_security_example' => [ // Unique name of security
-                    'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
-                    'description' => 'A short description for oauth2 security scheme.',
-                    'flow' => 'implicit', // The flow used by the OAuth2 security scheme. Valid values are "implicit", "password", "application" or "accessCode".
-                    'authorizationUrl' => 'http://example.com/auth', // The authorization URL to be used for (implicit/accessCode)
-                    //'tokenUrl' => 'http://example.com/auth' // The authorization URL to be used for (password/application/accessCode)
-                    'scopes' => [
-                        'read:projects' => 'read your projects',
-                        'write:projects' => 'modify projects in your account',
-                    ]
-                ],
-                */
-
-                /* Open API 3.0 support
-                'passport' => [ // Unique name of security
-                    'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
-                    'description' => 'Laravel passport oauth2 security.',
-                    'in' => 'header',
-                    'scheme' => 'https',
+                'oauth2' => [
+                    'type' => 'oauth2',
+                    'description' => 'OAuth2 security',
                     'flows' => [
-                        "password" => [
-                            "authorizationUrl" => config('app.url') . '/oauth/authorize',
-                            "tokenUrl" => config('app.url') . '/oauth/token',
-                            "refreshUrl" => config('app.url') . '/token/refresh',
-                            "scopes" => []
+                        'authorizationCode' => [
+                            'authorizationUrl' => env('OAUTH_AUTHORIZATION_URL'),
+                            'tokenUrl' => env('OAUTH_TOKEN_URL'),
+                            'scopes' => [],
                         ],
                     ],
                 ],
-                'sanctum' => [ // Unique name of security
-                    'type' => 'apiKey', // Valid values are "basic", "apiKey" or "oauth2".
-                    'description' => 'Enter token in format (Bearer <token>)',
-                    'name' => 'Authorization', // The name of the header or query parameter to be used.
-                    'in' => 'header', // The location of the API key. Valid values are "query" or "header".
-                ],
-                */
-            ],
-            'security' => [
-                /*
-                 * Examples of Securities
-                 */
-                [
-                    /*
-                    'oauth2_security_example' => [
-                        'read',
-                        'write'
-                    ],
-
-                    'passport' => []
-                    */
-                ],
-
-
             ],
         ],
+
 
         /*
          * Set this to `true` in development mode so that docs would be regenerated on each request
