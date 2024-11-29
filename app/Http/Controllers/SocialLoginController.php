@@ -28,7 +28,7 @@ class SocialLoginController extends Controller
 
             if ($existingUser) {
 
-                return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard');
+                return redirect('https://jobsphererdaflask-production.up.railway.app/seeker/dashboard');
 
             } else {
 
@@ -41,7 +41,7 @@ class SocialLoginController extends Controller
                     ]
                 );
                 
-                return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard');
+                return redirect('https://jobsphererdaflask-production.up.railway.app/seeker/dashboard');
 
             }
 
