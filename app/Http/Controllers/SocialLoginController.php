@@ -11,7 +11,8 @@ class SocialLoginController extends Controller
 {
     public function auth_google()
     {
-        return Socialite::driver('google')->redirect();
+        // return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->scopes(['email', 'profile', 'openid'])->redirect();
     }
 
     // Handle callback from provider
@@ -46,7 +47,7 @@ class SocialLoginController extends Controller
                 
                 Auth::login($newUser);
                 return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard');
-                
+
             }
 
         } catch (Exception $e) {
