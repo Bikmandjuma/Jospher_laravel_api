@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Exception;
-use App\Models\SocialiteUser;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class SocialiteController extends Controller
 {
@@ -20,39 +20,50 @@ class SocialiteController extends Controller
     public function login_by_google_callback(Request $request)
     {
         try {
+
             $user = Socialite::driver('google')->stateless()->user();
 
-            // Log the user data received from Google
             Log::info('Google user data:', $user->toArray());
 
-            $existingUser = SocialiteUser::where('provider_id', $user->id)->first();
+            $existingUser = User::where('provider_id', $user->id)->first();
 
             if ($existingUser) {
-                $token = Auth::guard('api')->login($existingUser);
+                $token = Auth::guard('user')->login($existingUser);
 
-                return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
+                // return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
+                return redirect()->json([
+                    'massage' => "Existing user's google data login !"
+                ]);
+
+            }else{
+
+                $profilePicture = $user->avatar;
+                $birthdate = isset($user->user['birthday']) ? $user->user['birthday'] : null;
+
+                $newUser = User::create([
+                    'names' => $user->name,
+                    'provider_name' => 'Google',
+                    'provider_id' => $user->id,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'image' => $profilePicture,
+                    'dob' => $birthdate,
+                    'gender' => $user->gender,
+                ]);
+
+                $token = Auth::guard('user')->login($newUser);
+
+                // return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
+                return redirect()->json([
+                    'massage' => "new user's google data added !"
+                ]);
             }
 
-            $profilePicture = $user->avatar;
-            $birthdate = isset($user->user['birthday']) ? $user->user['birthday'] : null;
-
-            // Create a new SocialiteUser
-            $newUser = SocialiteUser::create([
-                'names' => $user->name,
-                'provider_name' => 'Google',
-                'provider_id' => $user->id,
-                'provider_email' => $user->email,
-            ]);
-            
-            $token = Auth::guard('api')->login($newUser);
-
-            return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard?token=' . $token);
         } catch (Exception $e) {
             Log::error('Google login error: ' . $e->getMessage());
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
+
     }
 
-
-    
 }

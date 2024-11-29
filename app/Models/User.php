@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    protected $table='admins';
+    use HasFactory, Notifiable;
+ 
+    protected $table = 'users';
     protected $guarded = array();
-    
-    use HasFactory,Notifiable;
+
     protected $fillable = [
         'names',
+        'provider_name',
+        'provider_id',
         'firstname',
         'lastname',
         'gender',
@@ -23,40 +23,29 @@ class User extends Authenticatable implements JWTSubject
         'phone',
         'dob',
         'image',
-        'username',
         'password',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public static function boot()
+    {
+        parent::boot();
 
-    // Implement the required methods for JWTSubject interface
+        static::creating(function ($user) {
+            if ($user->password) {
+                $user->password = bcrypt($user->password); // Hash the password
+            }
+        });
+    }
 
-    /**
-     * Get the identifier that will be stored in the JWT.
-     *
-     * @return mixed
-     */
+    // JWTSubject methods
+
     public function getJWTIdentifier()
     {
-        return $this->getKey(); // or return the primary key field
+        return $this->getKey();  // Return the user's ID
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
     public function getJWTCustomClaims()
     {
-        return [];
+        return []; // You can add custom claims here if necessary
     }
 }
-
