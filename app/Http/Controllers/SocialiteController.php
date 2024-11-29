@@ -20,8 +20,7 @@ class SocialiteController extends Controller
 
     public function login_by_google_callback(Request $request)
     {
-        return response()->json([
-            'message' => "Google testing !",
-        ]);
+        return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard');
+        
     }
 }
