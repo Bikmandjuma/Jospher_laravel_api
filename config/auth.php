@@ -25,6 +25,12 @@ return [
             'hash' => false, // Optional, if you don't require hashing for the admin JWT
         ],
 
+        'user' => [
+            'driver' => 'jwt',
+            'provider' => 'userss',
+            'hash' => false, // Optional, if you don't require hashing for the admin JWT
+        ],
+
     ],
 
     'providers' => [
@@ -32,6 +38,11 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class, // Make sure this points to your Admin model
+        ],
+
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,  // Update with the correct user model if necessary
         ],
     ],
 

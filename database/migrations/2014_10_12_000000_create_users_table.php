@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePartialUserRegistersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreatePartialUserRegistersTable extends Migration
      */
     public function up()
     {
-        Schema::create('partial_user_registers', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('names');
+            $table->string('fullname');
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreatePartialUserRegistersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('partial_user_registers');
+        Schema::dropIfExists('users');
     }
-}
+};
