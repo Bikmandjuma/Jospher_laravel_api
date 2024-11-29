@@ -6,129 +6,85 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
-/**
- * @OA\SecurityScheme(
- *     securityScheme="bearerAuth",
- *     type="http",
- *     scheme="bearer",
- *     bearerFormat="JWT",
- *     description="JWT Authorization"
- * )
- */
-
-/**
- * @OA\OpenApi(
- *     @OA\Info(
- *         title="Jospher",
- *         version="1.0.0",
- *         description="Jospher_API Description"
- *     )
- * )
- */
-
 class AuthController extends Controller
 {
 
     public function __construct()
     {
-        // $this->middleware('auth:api', ['except' => ['login','register']]);
-        $this->middleware('guest', ['except' => ['email','password']]);
+        $this->middleware('auth:api', ['except' => ['login','register']]);
     }
 
-    /**
-     *  * @OA\Post(
-     * path="/api/login",
-     * summary="Sign in",
-     * description="Login by email, password",
-     * operationId="authLogin",
-     * tags={"Authentication"}, 
-     *      @OA\Parameter(
-     *          name="email",
-     *          description="use email",
-     *          required=true,
-     *          in="query",
-     *          @OA\Schema(
-     *              type="string"
-     *          )
-     *       ),
-     *      @OA\Parameter(
-     *          name="password",
-     *          description="use password",
-     *          required=true,
-     *          in="query",
-     *          @OA\Schema(
-     *              type="string"
-     *          )
-     *       ),
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successfull logged in."
-     *     ),
-     *      @OA\Response(
-     *          response=204,
-     *          description="Successful operation",
-     *          @OA\JsonContent()
-     *       ),
-     *      @OA\Response(
-     *          response=400,
-     *          description="Bad user Input",
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      ),
-     *      @OA\Response(
-     *          response=404,
-     *          description="Resource Not Found"
-     *      )
-     * )
-     */
-
-    public function login(Request $request){
-
+    public function login(Request $request)
+    {
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-        
         $credentials = $request->only('email', 'password');
-        
-        // Debugging log to see what credentials are being passed
-        \Log::info('Login credentials:', $credentials);
 
-        $admin_token = auth::guard('admin')->attempt($credentials);
-
-        if ($admin_token) {
-            $admin = auth::guard('admin')->user();
-            return response()->json([
-                'status' => 'Admin success login',
-                'admin_data' => $admin,
-                'authorisation' => [
-                    'token' => $admin_token,
-                    'type' => 'bearer',
-                ]
-            ], 200);
-        }  else {
+        $token = Auth::attempt($credentials);
+        if (!$token) {
             return response()->json([
                 'status' => 'error',
-                'wrong_Cred' => 'Wrong credentials, try again!',
+                'message' => 'Unauthorized',
             ], 401);
         }
+
+        $user = Auth::user();
+        return response()->json([
+                'status' => 'success',
+                'user' => $user,
+                'authorisation' => [
+                    'token' => $token,
+                    'type' => 'bearer',
+                ]
+            ]);
+
+    }
+
+    public function register(Request $request){
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $token = Auth::login($user);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User created successfully',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ]);
     }
 
     public function logout()
     {
         Auth::logout();
-        session()->invalidate();
-        session()->regenerateToken();
-        
         return response()->json([
             'status' => 'success',
-            'logout_message' => 'Successfully logged out',
+            'message' => 'Successfully logged out',
+        ]);
+    }
+
+    public function refresh()
+    {
+        return response()->json([
+            'status' => 'success',
+            'user' => Auth::user(),
+            'authorisation' => [
+                'token' => Auth::refresh(),
+                'type' => 'bearer',
+            ]
         ]);
     }
 
