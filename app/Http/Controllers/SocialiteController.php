@@ -39,14 +39,16 @@ class SocialiteController extends Controller
 
                 $profilePicture = $user->avatar;
                 $birthdate = isset($user->user['birthday']) ? $user->user['birthday'] : null;
+                $phone =$user->phone ?? 'N/A';
+                $image = $user->avatar ?? 'default_image_url';
 
                 $newUser = User::create([
                     'names' => $user->name,
                     'provider_name' => 'Google',
                     'provider_id' => $user->id,
                     'email' => $user->email,
-                    'phone' => $user->phone,
-                    'image' => $profilePicture,
+                    'phone' => $phone,
+                    'image' => $image,
                     'dob' => $birthdate,
                     'gender' => $user->gender,
                 ]);
