@@ -21,7 +21,7 @@ class SocialiteController extends Controller
     public function login_by_google_callback(Request $request)
     {
         return response()->json([
-            'message' => "New user's Google",
+            'message' => "Google testing !",
         ]);
     }
 }
