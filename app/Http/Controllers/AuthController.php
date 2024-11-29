@@ -101,7 +101,6 @@ class AuthController extends Controller
         \Log::info('Login credentials:', $credentials);
 
         $admin_token = auth::guard('admin')->attempt($credentials);
-        $user_token = auth::guard('user')->attempt($credentials);
 
         if ($admin_token) {
             $admin = auth::guard('admin')->user();
@@ -113,17 +112,7 @@ class AuthController extends Controller
                     'type' => 'bearer',
                 ]
             ], 200);
-        } elseif ($user_token) {
-            $user = auth::guard('user')->user();
-            return response()->json([
-                'status' => 'User success login',
-                'user_data' => $user,
-                'authorisation' => [
-                    'token' => $user_token,
-                    'type' => 'bearer',
-                ]
-            ], 200);
-        } else {
+        }  else {
             return response()->json([
                 'status' => 'error',
                 'wrong_Cred' => 'Wrong credentials, try again!',
