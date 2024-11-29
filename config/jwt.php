@@ -295,6 +295,8 @@ return [
         |
         */
 
-        'storage' => PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate::class,
+        // 'storage' => PHPOpenSourceSaver\JWTAuth\Providers\Storage\Illuminate::class,
+        'storage' => Tymon\JWTAuth\Providers\Storage\Illuminate::class,
+
     ],
 ];

@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SocialLoginController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+// routes/web.php
+Route::get('auth/google', [SocialLoginController::class, 'auth_google']);
+Route::get('auth/google/callback', [SocialLoginController::class, 'auth_google_callback']);
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');

@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('register_muslims', function (Blueprint $table) {
+        Schema::create('social_logins', function (Blueprint $table) {
             $table->id();
+            $table->string('user_names')->nullable();
+            $table->string('provider_name');
+            $table->string('provider_id')->unique()->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('register_muslims');
+        Schema::dropIfExists('social_logins');
     }
 };
