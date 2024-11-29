@@ -25,18 +25,9 @@ return [
             'hash' => false, // Optional, if you don't require hashing for the admin JWT
         ],
 
-        'user' => [
-            'driver' => 'jwt',
-            'provider' => 'users',
-            'hash' => false, // Same here for the user guard
-        ],
     ],
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class, // Make sure this points to your User model
-        ],
 
         'admins' => [
             'driver' => 'eloquent',

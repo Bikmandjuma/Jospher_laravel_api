@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use Exception;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
+use App\Models\SocialiteUser;
 use Illuminate\Support\Facades\Log;
 
 class SocialiteController extends Controller
@@ -31,7 +31,7 @@ class SocialiteController extends Controller
             Log::info('Google user data:', $user->toArray());
 
             // Find the user by email (if it exists)
-            $existingUser = User::where('email', $user->email)->first();
+            $existingUser = SocialiteUser::where('email', $user->email)->first();
 
             if ($existingUser) {
                 // Attempt to authenticate the user
@@ -39,12 +39,13 @@ class SocialiteController extends Controller
                 return redirect()->json(['message' => 'User logged in successfully']);
             } else {
                 // Create a new user
-                $newUser = User::create([
+                $newUser = SocialiteUser::create([
                     'name' => $user->name,
                     'email' => $user->email,
                     'provider_name' => 'Google',
                     'provider_id' => $user->id,
                 ]);
+                
                 Auth::login($newUser);
                 return redirect()->json(['message' => 'New user created and logged in']);
             }
