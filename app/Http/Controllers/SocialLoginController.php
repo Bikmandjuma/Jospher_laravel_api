@@ -23,20 +23,16 @@ class SocialLoginController extends Controller
             // Get user info from Google
             $socialUser = Socialite::driver('google')->stateless()->user();
 
-            // Log the user info for debugging
-            Log::info('Google user data:', $socialUser->toArray());
-
             // Find the user by email (if it exists)
             $existingUser = SocialLogin::where('email', $socialUser->email)->first();
 
             if ($existingUser) {
 
-                Auth::login($existingUser);
                 return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard');
 
             } else {
 
-                $newUser = SocialLogin::Create(
+                $newUser = SocialLogin::create(
                     [   'user_names' =>  $socialUser->name,
                         'provider_name' => 'Google',
                         'provider_id' => $socialUser->id,
@@ -45,7 +41,6 @@ class SocialLoginController extends Controller
                     ]
                 );
                 
-                Auth::login($newUser);
                 return redirect('https://jobsphererdaflask-production.up.railway.app/user/dashboard');
 
             }
@@ -58,11 +53,6 @@ class SocialLoginController extends Controller
 
     }
 
-    // public function login_by_google()
-    // {
-    //     // Initiating Google login process
-    //     return Socialite::driver('google')->stateless()->scopes(['email', 'profile', 'openid'])->redirect();
-    // }
 
 
 }
