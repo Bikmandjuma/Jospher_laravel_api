@@ -15,7 +15,7 @@ class SocialiteController extends Controller
     public function login_by_google()
     {
         // Initiating Google login process
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->scopes(['email', 'profile', 'openid'])->redirect();
     }
 
     public function login_by_google_callback(Request $request)
