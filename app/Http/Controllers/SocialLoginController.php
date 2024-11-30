@@ -39,6 +39,12 @@ class SocialLoginController extends Controller
                         'image' =>  $socialUser->avatar,
                     ]
                 );
+
+                $newUser = SocialLogin::create(
+                    [   'name' =>  $socialUser->name,
+                        'email' =>  $socialUser->email,
+                    ]
+                );
                 
                 return redirect('https://jobsphererdaflask-production.up.railway.app/seeker/dashboard');
 
