@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\SocialLogin;
-use App\Models\User;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Log;
 
 class SocialLoginController extends Controller
 {
@@ -14,50 +14,46 @@ class SocialLoginController extends Controller
         return Socialite::driver('google')->stateless()->scopes(['email', 'profile', 'openid'])->redirect();
     }
 
-    // Handle callback from provider
-    public function auth_google_callback()
-    {
-
+    public function auth_google_callback() {
         try {
-            // Get user info from Google
+            // Step 2.1: Get user info from Google
             $socialUser = Socialite::driver('google')->stateless()->user();
 
-            // Find the user by email (if it exists)
-            $existingUser = SocialLogin::where('email', $socialUser->email)->first();
+            // Log the entire user object for debugging purposes
+            Log::info('Google User Object:', (array)$socialUser);
 
-            if ($existingUser) {
-
-                return redirect('https://jobsphererdaflask-production.up.railway.app/seeker/dashboard');
-
-            } else {
-
-                $newUser = SocialLogin::create(
-                    [   'user_names' =>  $socialUser->name,
-                        'provider_name' => 'Google',
-                        'provider_id' => $socialUser->id,
-                        'email' =>  $socialUser->email,
-                        'image' =>  $socialUser->avatar,
-                    ]
-                );
-
-                // User::create([
-                //     'name' =>  $socialUser->name,
-                //     'email' =>  $socialUser->email,
-                // ]);
-                
-                return redirect('https://jobsphererdaflask-production.up.railway.app/seeker/dashboard');
-
+            // If there's an issue with the user data, log and return an error
+            if(!$socialUser || !'test-static-id') {
+                return response()->json(['error' => 'Google user ID is missing.'], 400);
             }
 
+            // Log the Google User ID for debugging purposes
+            Log::info('Google User ID:', ['id' => 'test-static-id']);
+
+            // Prepare the Google user data to pass to Flask
+            $googleUserData = [
+                'id' => 'test-static-id',  // Static Google user ID for testing
+            ];
+
+
+            // Log the data that will be passed to Flask
+            Log::info('Redirecting with Google Data:', $googleUserData);
+
+            // Prepare the redirect URL with query parameters
+            $redirectUrl = 'https://jobsphererdaflask-production.up.railway.app/seeker/dashboard?' . http_build_query($googleUserData);
+
+            // Log the redirect URL for debugging
+            Log::info('Redirecting to Flask URL:', ['url' => $redirectUrl]);
+
+            // Step 3: If user exists, redirect to Flask with Google user data
+            return redirect($redirectUrl);
+
         } catch (Exception $e) {
+            // Log any errors that occur during the process
             Log::error('Google login error: ' . $e->getMessage());
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
-
-
     }
 
 
-
 }
-
