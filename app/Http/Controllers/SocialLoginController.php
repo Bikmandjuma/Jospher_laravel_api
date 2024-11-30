@@ -40,10 +40,10 @@ class SocialLoginController extends Controller
                     ]
                 );
 
-                User::create([
-                    'name' =>  $socialUser->name,
-                    'email' =>  $socialUser->email,
-                ]);
+                // User::create([
+                //     'name' =>  $socialUser->name,
+                //     'email' =>  $socialUser->email,
+                // ]);
                 
                 return redirect('https://jobsphererdaflask-production.up.railway.app/seeker/dashboard');
 
