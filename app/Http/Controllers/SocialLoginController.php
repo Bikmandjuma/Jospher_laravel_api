@@ -11,7 +11,6 @@ class SocialLoginController extends Controller
 {
     public function auth_google()
     {
-        // return Socialite::driver('google')->redirect();
         return Socialite::driver('google')->stateless()->scopes(['email', 'profile', 'openid'])->redirect();
     }
 
