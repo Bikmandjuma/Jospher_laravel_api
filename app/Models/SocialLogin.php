@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 
-class SocialLogin extends Authenticatable
+class SocialLogin extends Model
 {
     use HasFactory, HasApiTokens;
 
