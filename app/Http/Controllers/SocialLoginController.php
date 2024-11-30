@@ -26,8 +26,6 @@ class SocialLoginController extends Controller
 
             if ($existingUser) {
                 // User already exists, log them in
-                Auth::login($existingUser);
-
                 // Generate a token (if using JWT, Passport, or Sanctum)
                 $token = $existingUser->createToken('Social Login')->accessToken;
 
@@ -45,8 +43,6 @@ class SocialLoginController extends Controller
                     'image' => $socialUser->avatar,
                 ]);
 
-                // Log in the new user
-                Auth::login($newUser);
 
                 // Generate a token (if using JWT, Passport, or Sanctum)
                 $token = $newUser->createToken('Social Login')->accessToken;
