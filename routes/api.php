@@ -31,3 +31,13 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('refresh', 'refresh');
 
 });
+
+Route::get('/test_user_data', function () {
+    $userData = [
+        'name' => 'John Doe',
+        'email' => 'john.doe@example.com',
+        'age' => 30
+    ];
+    
+    return response()->json($userData);
+});
