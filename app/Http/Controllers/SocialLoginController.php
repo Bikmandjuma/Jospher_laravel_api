@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -9,44 +8,52 @@ use Illuminate\Support\Facades\Log;
 
 class SocialLoginController extends Controller
 {
+    // Step 1: Redirect to Google for authentication
     public function auth_google()
     {
         return Socialite::driver('google')->stateless()->scopes(['email', 'profile', 'openid'])->redirect();
     }
 
-    public function auth_google_callback() {
+    // Step 2: Handle the callback from Google
+    public function auth_google_callback()
+    {
         try {
             // Step 2.1: Get user info from Google
             $socialUser = Socialite::driver('google')->stateless()->user();
 
-            // Log the entire user object for debugging purposes
-            Log::info('Google User Object:', (array)$socialUser);
-
-            // If there's an issue with the user data, log and return an error
-            if(!$socialUser || !'test-static-id') {
-                return response()->json(['error' => 'Google user ID is missing.'], 400);
-            }
-
             // Log the Google User ID for debugging purposes
-            Log::info('Google User ID:', ['id' => 'test-static-id']);
+            Log::info('Google User ID:', ['id' => $socialUser->id]);
+
+            // Step 2.2: Check if the user already exists in our database
+            $existingUser = SocialLogin::where('email', $socialUser->email)->first();
 
             // Prepare the Google user data to pass to Flask
             $googleUserData = [
-                'id' => 'test-static-id',  // Static Google user ID for testing
+                'id' => $socialUser->id,  // Google user ID
+                'name' => $socialUser->name,  // Google user name
+                'email' => $socialUser->email,  // Google user email
+                'image' => $socialUser->avatar,  // Google user avatar
             ];
-
 
             // Log the data that will be passed to Flask
             Log::info('Redirecting with Google Data:', $googleUserData);
 
-            // Prepare the redirect URL with query parameters
-            $redirectUrl = 'https://jobsphererdaflask-production.up.railway.app/seeker/dashboard?' . http_build_query($googleUserData);
+            if ($existingUser) {
+                // Step 3: If user exists, redirect to Flask with Google user data
+                return redirect('https://jobsphererdaflask-production.up.railway.app/seeker/dashboard?' . http_build_query($googleUserData));
+            } else {
+                // Step 4: If the user is new, save their information and then redirect
+                $newUser = SocialLogin::create([
+                    'user_names' => $socialUser->name,
+                    'provider_name' => 'Google',
+                    'provider_id' => $socialUser->id,
+                    'email' => $socialUser->email,
+                    'image' => $socialUser->avatar,
+                ]);
 
-            // Log the redirect URL for debugging
-            Log::info('Redirecting to Flask URL:', ['url' => $redirectUrl]);
-
-            // Step 3: If user exists, redirect to Flask with Google user data
-            return redirect($redirectUrl);
+                // Step 5: After saving the new user, redirect to Flask with the Google user data
+                return redirect('https://jobsphererdaflask-production.up.railway.app/seeker/dashboard?' . http_build_query($googleUserData));
+            }
 
         } catch (Exception $e) {
             // Log any errors that occur during the process
@@ -54,6 +61,4 @@ class SocialLoginController extends Controller
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
-
-
 }
