@@ -11,7 +11,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.8",
-        "php-open-source-saver/jwt-auth": "^2.3",
+        "lcobucci/jwt": "^4.0",
         "tymon/jwt-auth": "^2.1"
     },
 

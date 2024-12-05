@@ -1,43 +1,26 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\AuthController;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+use App\Http\Controllers\UserController;
 
 // routes/web.php
 Route::get('auth/google', [SocialLoginController::class, 'auth_google']);
 Route::get('auth/google/callback', [SocialLoginController::class, 'auth_google_callback']);
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('login', 'login');
+    Route::post('login', 'login')->name('login');
     Route::post('register', 'register');
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
-
 });
 
-Route::get('/test_user_data', function () {
-    $userData = [
-        'name' => 'John Doe',
-        'email' => 'john.doe@example.com',
-        'age' => 30
-    ];
-    
-    return response()->json($userData);
+//start of Seeker's api routes
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('/seeker/dashboard', [UserController::class, 'dashboard']);
+    Route::get('/seeker/profile', [UserController::class, 'profile_picture']);
+    Route::get('/seeker/view_info', [UserController::class, 'View_information']);
+    Route::post('/seeker/update_info', [UserController::class, 'edit_info']);
 });
+//end of Seeker's api routes

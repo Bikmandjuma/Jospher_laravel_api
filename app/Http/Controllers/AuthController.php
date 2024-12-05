@@ -67,14 +67,23 @@ class AuthController extends Controller
         ]);
     }
 
-    public function logout()
-    {
+     public function logout(Request $request){
+        
         Auth::logout();
+
+        // Invalidate the session
+        $request->session()->invalidate();
+
+        // Regenerate the session token to prevent CSRF attacks
+        $request->session()->regenerateToken();
+
         return response()->json([
-            'status' => 'success',
-            'message' => 'Successfully logged out',
+            'status', 'Success.',
+            'message', 'You have been logged out.'
         ]);
+
     }
+
 
     public function refresh()
     {
