@@ -27,14 +27,17 @@ class SocialLoginController extends Controller
             if ($existingUser) {
                 Auth::login($existingUser);
                 $token = JWTAuth::fromUser($existingUser);
+                
+                Log::info('Social User:', ['user' => $existingUser]);
 
-                $googleUserData = [
-                    'token' => $token,
-                ];
-
-                Log::info('Redirecting with Existing User Data:', $googleUserData);
-
-                return redirect('http://192.168.0.82:8000/seeker/dashboard?' . http_build_query($googleUserData));
+                return response()->json([
+                    'status' => 'login successfully !',
+                    'user' => $existingUser,
+                    'authorisation' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ]
+                ]);
 
             } else {
 
@@ -65,14 +68,18 @@ class SocialLoginController extends Controller
                 Auth::login($newUser);
                 $token = JWTAuth::fromUser($newUser);
 
-                $googleUserData = [
-                    'token' => $token,
-                ];
+                Log::info('Social User:', ['user' => $newUser]);
 
-                Log::info('Redirecting with New User Data:', $googleUserData);
+                return response()->json([
+                    'status' => 'login successfully !',
+                    'user' => $newUser,
+                    'authorisation' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ]
 
-                return redirect('http://192.168.0.82:8000/seeker/dashboard?' . http_build_query($googleUserData));
-            
+
+                ]);
             } 
 
         } catch (Exception $e) {

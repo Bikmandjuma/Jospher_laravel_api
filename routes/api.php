@@ -11,10 +11,11 @@ Route::get('auth/google/callback', [SocialLoginController::class, 'auth_google_c
 
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login')->name('login');
-    Route::post('register', 'register');
     Route::post('logout', 'logout');
     Route::post('refresh', 'refresh');
 });
+
+Route::post('/user/initial_registration', [UserController::class, 'register']);
 
 //start of Seeker's api routes
 Route::middleware(['auth:api'])->group(function () {
