@@ -9,65 +9,89 @@ use App\Models\User;
 class AuthController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-        $credentials = $request->only('email', 'password');
-
-        $token = Auth::attempt($credentials);
-        if (!$token) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
-            ], 401);
-        }
-
-        $user = Auth::user();
-        return response()->json([
-                'status' => 'success',
-                'user' => $user,
-                'authorisation' => [
-                    'token' => $token,
-                    'type' => 'bearer',
-                ]
+    public function login(Request $request){
+        
+        try {
+            // Validate input fields
+            $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string',
+            ], [
+                'username.required' => 'The username is required.',
+                'password.required' => 'The password is required.',
             ]);
 
+            // Determine if username is email or phone
+            $loginField = filter_var($request->input('username'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
+            // Attempt to authenticate with the 'user' guard
+            if ($token = Auth::guard('user')->attempt([
+                $loginField => $request->input('username'),
+                'password' => $request->input('password'),
+            ])) {
+                $user = Auth::guard('user')->user();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'User login successfully!',
+                    'user' => $user,
+                    'role' => 'user',
+                    'authorisation' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ],
+                ]);
+            }
+
+            // Attempt to authenticate with the 'admin' guard
+            if ($token = Auth::guard('admin')->attempt([
+                $loginField => $request->input('username'),
+                'password' => $request->input('password'),
+            ])) {
+                $user = Auth::guard('admin')->user();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Admin login successfully!',
+                    'user' => $user,
+                    'role' => 'admin',
+                    'authorisation' => [
+                        'token' => $token,
+                        'type' => 'bearer',
+                    ],
+                ]);
+            }
+
+            // Return error if authentication fails
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid Username or Password, try again!',
+            ], 401);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation errors
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurred.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Log unexpected errors
+            \Log::error('Login failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An unexpected error occurred. Please try again later.',
+            ], 500);
+        }
     }
 
-    public function register(Request $request){
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
 
-        $token = Auth::login($user);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'User created successfully',
-            'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
-        ]);
-    }
-
-     public function logout(Request $request){
+    public function logout(Request $request){
         
         Auth::logout();
 
@@ -82,19 +106,6 @@ class AuthController extends Controller
             'message', 'You have been logged out.'
         ]);
 
-    }
-
-
-    public function refresh()
-    {
-        return response()->json([
-            'status' => 'success',
-            'user' => Auth::user(),
-            'authorisation' => [
-                'token' => Auth::refresh(),
-                'type' => 'bearer',
-            ]
-        ]);
     }
 
 }
