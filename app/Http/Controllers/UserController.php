@@ -396,7 +396,7 @@ class UserController extends Controller
     {
         $today = now()->toDateString();
         $visit = Visit::where('date', $today)->first();
-        $count = $visit ? $visit->count + 1299 : 0;
+        $count = $visit ? $visit->count : 0;
         return response()->json(['count' => $this->formatNumber($count)]);
     }
 
