@@ -16,6 +16,9 @@ Route::post('/user/initial_registration', [UserController::class, 'register']);
 Route::post('/user/verify/code_to_register/{email}', [UserController::class, 'verify_code_to_register']);
 Route::post('/user/fill_missed_info/{email}', [UserController::class, 'fill_missed_info']);
 
+Route::get('/getVisitCount', [UserController::class, 'getVisitCount']);
+Route::post('/incrementVisitCount', [UserController::class, 'incrementVisitCount']);
+
 //User/Seeker routes
 Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){
     Route::get('/dashboard', [UserController::class, 'dashboard']);

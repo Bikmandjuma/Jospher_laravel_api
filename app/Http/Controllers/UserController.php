@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\CodeToRegister;
 use App\Models\JobCategory;
 use App\Mail\CodeToRegisterMail;
+use App\Models\Visit;
 
 class UserController extends Controller
 {
@@ -375,6 +376,33 @@ class UserController extends Controller
             ]);
         }
         
+    }
+    
+
+    // Get the visit count
+    public function getVisitCount()
+    {
+        $visit = Visit::first();
+
+        if (!$visit) {
+            $visit = Visit::create(['count' => 0]);
+        }
+
+        return response()->json(['count' => $visit->count]);
+    }
+
+    // Increment the visit count
+    public function incrementVisitCount()
+    {
+        $visit = Visit::first();
+
+        if (!$visit) {
+            $visit = Visit::create(['count' => 1]);
+        } else {
+            $visit->increment('count');
+        }
+
+        return response()->json(['message' => 'Visit count incremented']);
     }
 
 
