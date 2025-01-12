@@ -378,46 +378,66 @@ class UserController extends Controller
         
     }
 
+    // public function getVisitCount()
+    // {
+    //     $today = now()->toDateString();
+    //     $visit = Visit::where('date', $today)->first();
 
-    // Get the visit count
+    //     return response()->json(['count' => $visit ? $visit->count : 0]);
+    // }
+
+    // public function getTotalVisits()
+    // {
+    //     $total = Visit::sum('count');
+    //     return response()->json(['total' => $total]);
+    // }
+
     public function getVisitCount()
     {
         $today = now()->toDateString();
         $visit = Visit::where('date', $today)->first();
-
-        return response()->json(['count' => $visit ? $visit->count : 0]);
+        $count = $visit ? $visit->count : 0;
+        return response()->json(['count' => $this->formatNumber($count)]);
     }
+
 
     public function getTotalVisits()
     {
         $total = Visit::sum('count');
-        return response()->json(['total' => $total]);
+        return response()->json(['total' => $this->formatNumber($total)]);
+    }
+
+    private function formatNumber($number)
+    {
+        if ($number >= 1000000000) {
+            return round($number / 1000000000, 1) . 'B';
+        } elseif ($number >= 1000000) {
+            return round($number / 1000000, 1) . 'M';
+        } elseif ($number >= 1000) {
+            return round($number / 1000, 1) . 'k';
+        }
+
+        return $number;
     }
 
 
-    // Increment the visit count
     public function incrementVisitCount()
     {
-        // Get today's date
         $today = now()->toDateString();
 
-        // Check if there's already a record for today
         $visit = Visit::where('date', $today)->first();
 
         if (!$visit) {
-            // Create a new row if no record for today
             Visit::create([
                 'count' => 1,
                 'date' => $today,
             ]);
         } else {
-            // Increment the count if a record exists
             $visit->increment('count');
         }
 
         return response()->json(['message' => 'Visit count incremented']);
     }
-
 
 
 }
