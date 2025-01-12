@@ -18,6 +18,7 @@ Route::post('/user/fill_missed_info/{email}', [UserController::class, 'fill_miss
 
 Route::get('/getVisitCount', [UserController::class, 'getVisitCount']);
 Route::post('/incrementVisitCount', [UserController::class, 'incrementVisitCount']);
+Route::get('/visit/Count/total', [UserController::class, 'getTotalVisits']);
 
 //User/Seeker routes
 Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){

@@ -377,33 +377,47 @@ class UserController extends Controller
         }
         
     }
-    
+
 
     // Get the visit count
     public function getVisitCount()
     {
-        $visit = Visit::first();
+        $today = now()->toDateString();
+        $visit = Visit::where('date', $today)->first();
 
-        if (!$visit) {
-            $visit = Visit::create(['count' => 0]);
-        }
-
-        return response()->json(['count' => $visit->count]);
+        return response()->json(['count' => $visit ? $visit->count : 0]);
     }
+
+    public function getTotalVisits()
+    {
+        $total = Visit::sum('count');
+        return response()->json(['total' => $total]);
+    }
+
 
     // Increment the visit count
     public function incrementVisitCount()
     {
-        $visit = Visit::first();
+        // Get today's date
+        $today = now()->toDateString();
+
+        // Check if there's already a record for today
+        $visit = Visit::where('date', $today)->first();
 
         if (!$visit) {
-            $visit = Visit::create(['count' => 1]);
+            // Create a new row if no record for today
+            Visit::create([
+                'count' => 1,
+                'date' => $today,
+            ]);
         } else {
+            // Increment the count if a record exists
             $visit->increment('count');
         }
 
         return response()->json(['message' => 'Visit count incremented']);
     }
+
 
 
 }
