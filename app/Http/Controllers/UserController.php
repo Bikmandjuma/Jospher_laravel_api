@@ -400,7 +400,6 @@ class UserController extends Controller
         return response()->json(['count' => $this->formatNumber($count)]);
     }
 
-
     public function getTotalVisits()
     {
         $total = Visit::sum('count');
@@ -417,9 +416,8 @@ class UserController extends Controller
             return round($number / 1000, 1) . 'k';
         }
 
-        return $number;
+        return $number + 1299;
     }
-
 
     public function incrementVisitCount()
     {
