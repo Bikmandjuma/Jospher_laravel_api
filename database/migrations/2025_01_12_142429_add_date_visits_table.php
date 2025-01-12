@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('visits', function (Blueprint $table) {
-            $table->date('date')->default(DB::raw('CURRENT_DATE'))->after('count');
+            $table->datetime('date')->default(DB::raw('CURRENT_TIMESTAMP'))->after('count');
         });
     }
 
