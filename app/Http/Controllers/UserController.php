@@ -185,36 +185,74 @@ class UserController extends Controller
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
-    public function edit_info(Request $request,$id){
 
-        if ($id) {
+    public function edit_info(Request $request){
 
-            $user = User::find($id);
+        try {
+        
+            $userId = Auth::guard('user')->user()->id;
 
-            if ($user) {
+            $validatedData = $request->validate([
+                'user_name' => 'required|string|max:255',
+                'firstname' => 'required|string|max:255',
+                'lastname' => 'required|string|max:255',
+                'gender' => 'required|string|max:255',
+                'phone' => [
+                    'required',
+                    'numeric',
+                    'digits:10',
+                    'regex:/^(072|078|073|079)\d{7}$/',
+                    'unique:users,phone,' . $userId,
+                    'unique:admins,phone,',
+                ],
+                    'email' => [
+                    'required',
+                    'email',
+                    'unique:users,email,' . $userId,
+                    'unique:admins,email,' . $userId,
+                ],
+                    'birthdate' => [
+                    'required',
+                    'date',
+                ],
 
-                $validatedData = $request->validate([
-                    'user_name' => 'required|string|max:255',
-                    'firstname' => 'required|string|max:255',
-                    'lastname' => 'required|string|max:255',
-                    'gender' => 'required|string|max:255',
-                    'phone' => 'required|string|max:255|unique:users,phone,' . $id.'|unique:admins,phone,' . $id,
-                    'birthdate' => 'required|string|max:255',
-                ]);
+            ]);
 
-                $user->update($validatedData);
+            $user = User::find($userId);
 
+            if (!$user) {
                 return response()->json([
-                    'message' => 'Data updated successfully!',
-                ], 200);
+                    'status' => 'error',
+                    'message' => 'User not found.'
+                ], 404);
             }
 
-            return response()->json(['error' => 'User not found'], 404);
+            $user->update($validatedData);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data updated successfully!',
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+        
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurred.',
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            
+            \Log::error('Error occurred while editing user info: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An unexpected error occurred. Please try again later.',
+            ], 500);
         
         }
-
-        return response()->json(['error' => 'Unauthorized'], 401);
-    
+        
     }
 
 
@@ -436,6 +474,8 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Visit count incremented']);
     }
+
+
 
 
 }
