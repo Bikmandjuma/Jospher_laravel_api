@@ -11,6 +11,9 @@ use App\Models\CodeToRegister;
 use App\Models\JobCategory;
 use App\Mail\CodeToRegisterMail;
 use App\Models\Visit;
+use Illuminate\Support\Facades\validator;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -475,7 +478,58 @@ class UserController extends Controller
         return response()->json(['message' => 'Visit count incremented']);
     }
 
+    public function modify_password(Request $request){
 
+        try {
+            
+            $request->merge([
+                'current_password' => trim($request->current_password),
+                'new_password' => trim($request->new_password),
+                'confirm_new_password' => trim($request->confirm_new_password),
+            ]);
+
+            $validator = Validator::make($request->all(), [
+                'current_password' => 'required|string',
+                'new_password' => 'required|string|between:8,32|same:confirm_new_password',
+                'confirm_new_password' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                throw new \Illuminate\Validation\ValidationException($validator);
+            }
+
+            $user = auth()->guard('user')->user();
+
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Current password does not match.',
+                ], 401);
+            }
+
+            $user->password = Hash::make($request->new_password);
+            $user->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password changed successfully.',
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurred.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Password update failed: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Update failed. ' . $e->getMessage(),
+            ], 500);
+        }
+        
+    }
 
 
 }

@@ -35,6 +35,7 @@ Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){
     Route::get('/fetch_user_job_categories', [UserController::class, 'fetch_user_job_Categories']);
     Route::get('/UserCount_job_category', [UserController::class, 'count_job_category']);
     Route::delete('/remove_job_category/{id}', [UserController::class, 'remove_job_category']);
+    Route::post('/modify_password', [UserController::class, 'modify_password']);
 });
 
 //Admin routes
