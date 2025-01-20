@@ -7,13 +7,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\Admin;
 use App\Models\CodeToRegister;
 use App\Models\JobCategory;
 use App\Mail\CodeToRegisterMail;
 use App\Models\Visit;
-use Illuminate\Support\Facades\validator;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use App\Models\ResetCodePassword;
+use App\Mail\SendCodeResetPasswordMail;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -296,7 +299,6 @@ class UserController extends Controller
         }
     }
 
-
     public function submitCategories(Request $request){
 
         // Validate that 'selectedItems' is provided and is an array
@@ -530,6 +532,128 @@ class UserController extends Controller
         }
         
     }
+
+    // Forgot Password API
+    public function submit_forgot_password(Request $request){
+
+        try {
+            // Validate email input
+            $request->validate([
+                'email' => 'required|email',
+            ], [
+                'email.required' => 'Please enter an email!',
+                'email.email' => 'Please enter a valid email address !',
+            ]);
+
+            $email = $request->input('email');
+
+            // Check if email exists in Admins or Users table
+            $existsInAdmins = Admin::where('email', $email)->exists();
+            $existsInUsers = User::where('email', $email)->exists();
+
+            if (!$existsInAdmins && !$existsInUsers) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'The email doesn\'t exist in our database !',
+                ], 404); // Not Found
+            }
+
+            // Delete all previous reset codes for this email
+            ResetCodePassword::where('email', $email)->delete();
+
+            // Generate a new reset code
+            $data = [
+                'email' => $email,
+                'code' => mt_rand(100000, 999999),
+            ];
+
+            // Create a new reset code record
+            $reset_data = ResetCodePassword::create($data);
+
+            // Send reset code via email
+            Mail::to($email)->send(new SendCodeResetPasswordMail($reset_data->email, $reset_data->code));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'A reset code has been sent to your email. Please check your inbox.',
+            ], 200); // OK
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation exceptions
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurr.',
+                'errors' => $e->errors(),
+            ], 422); // Unprocessable Entity
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Forgot password failed: ' . $e->getMessage());
+
+            // Handle any other exceptions
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while processing your request. ' . $e->getMessage(),
+            ], 500); // Internal Server Error
+        }
+    }
+
+    public function code_to_reset_pswd(Request $request, $email){
+
+        try {
+        
+            $request->validate([
+                'code' => 'required|numeric|digits:6',
+            ]);
+
+            if (is_array($request->code)) {
+                $code = implode('', $request->code);
+            } else {
+                $code = $request->code;
+            }
+
+            $register_Code = ResetCodePassword::where('email', $email)->where('code', $code)->first();
+
+            if ($register_Code) {
+        
+                if ($register_Code->created_at->diffInMinutes(now()) > 60) {
+                    $register_Code->delete();
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Your code is expired!',
+                    ], 400);
+                } else {
+        
+                    $register_Code->delete();
+                    return response()->json([
+                        'status' => 'success',
+                        'message_done' => 'code is valid , reset password now !',
+                    ], 200);
+                }
+            } else {
+                // Invalid code
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'The code is not valid. Please try again.',
+                ], 400);
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Handle validation exceptions
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurred.',
+                'errors' => $e->errors(),
+            ], 422); // Unprocessable Entity
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Code verification failed: ' . $e->getMessage());
+
+            // Handle any other exceptions
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while processing your request. ' . $e->getMessage(),
+            ], 500); // Internal Server Error
+        }
+    }
+
 
 
 }

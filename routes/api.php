@@ -24,6 +24,10 @@ Route::get('/visit/Count/total', [UserController::class, 'getTotalVisits']);
 Route::post('/initiate-payment', [MoMoPaymentController::class, 'initiatePayment']);
 Route::get('/check-status-payment', [MoMoPaymentController::class, 'checkPaymentStatus']);
 
+Route::post('/user/forgot-password',[UserController::class,'submit_forgot_password']);
+
+Route::post('/code_to_reset_pswd/{email}
+',[UserController::class,'code_to_reset_pswd']);
 
 //User/Seeker routes
 Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){
