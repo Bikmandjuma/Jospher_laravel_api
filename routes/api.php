@@ -21,8 +21,8 @@ Route::get('/getVisitCount', [UserController::class, 'getVisitCount']);
 Route::post('/incrementVisitCount', [UserController::class, 'incrementVisitCount']);
 Route::get('/visit/Count/total', [UserController::class, 'getTotalVisits']);
 
-Route::post('/initiate-payment', [MoMoPaymentController::class, 'initiatePayment']);
-Route::get('/check-status-payment', [MoMoPaymentController::class, 'checkPaymentStatus']);
+// Route::post('/initiate-payment', [MoMoPaymentController::class, 'initiatePayment']);
+// Route::get('/check-status-payment', [MoMoPaymentController::class, 'checkPaymentStatus']);
 
 Route::post('/user/forgot-password',[UserController::class,'submit_forgot_password']);
 
