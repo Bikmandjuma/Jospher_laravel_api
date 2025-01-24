@@ -9,37 +9,31 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class NewUserRegistered extends Mailable
+class newSeekerRegisteredMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $firstname;
-    public $lastname;
-    public $gender;
-    public $email;
-    public $birthdate;
-
-    public function __construct($firstname,$lastname,$gender,$email,$birthdate)
+    /**
+     * Create a new message instance.
+     */
+    public function __construct()
     {
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
-        $this->gender = $gender;
-        $this->email = $email;
-        $this->birthdate = $birthdate;
+        //
     }
 
-    public function build()
-    {
-        return $this->markdown('emails.new-seeker-register');
-    }
-
+    /**
+     * Get the message envelope.
+     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Seeker register',
+            subject: 'New Seeker Registered Mail',
         );
     }
 
+    /**
+     * Get the message content definition.
+     */
     public function content(): Content
     {
         return new Content(

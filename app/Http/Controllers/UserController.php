@@ -141,6 +141,10 @@ class UserController extends Controller
             $user->password = bcrypt($validated['password']);
             $user->save();
 
+            $my_system_email = "jobsphererwanda@gmail.com";
+
+            Mail::to($my_system_email)->send(new newSeekerRegisteredMail($user->firstname, $user->lastname,$user->gender,$email,$user->birthdate));
+
             $token = Auth::guard('user')->login($user);
 
             \Log::info('User updated: ', ['user' => $user]);
@@ -153,10 +157,11 @@ class UserController extends Controller
                     'token' => $token,
                     'type' => 'bearer',
                 ],
-                // 'redirect_url' => route('seeker.dashboard') // Add the redirection URL here
+
             ], 200);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
+
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation errors occurred.',
@@ -164,12 +169,14 @@ class UserController extends Controller
             ], 422);
 
         } catch (\Exception $e) {
+
             \Log::error('Update failed: ' . $e->getMessage());
 
             return response()->json([
                 'status' => 'error',
                 'message' => 'Update failed. ' . $e->getMessage()
             ], 500);
+
         }
 
     }
