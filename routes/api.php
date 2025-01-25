@@ -22,8 +22,9 @@ Route::get('/visit/Count/total', [UserController::class, 'getTotalVisits']);
 
 Route::post('/user/forgot-password',[UserController::class,'submit_forgot_password']);
 
-Route::post('/code_to_reset_pswd/{email}
-',[UserController::class,'code_to_reset_pswd']);
+Route::post('/code_to_reset_pswd/{email}',[UserController::class,'code_to_reset_pswd']);
+
+Route::post('/reset/password/{email}/{code}',[UserController::class,'resetPassword']);
 
 //User/Seeker routes
 Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){

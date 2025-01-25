@@ -11,10 +11,10 @@
     Gender : {{ $gender }}
     Email : {{ $email }}
     Birthdate : {{ $birthdate }}
-    
+
 @endcomponent
 
-<p>Now you have {{ count_users }} users in {{ config('app.name', 'Job-sphere-rwanda') }}</p>
+<p>Now you have {{ $count_users }} users in {{ config('app.name', 'Job-sphere-rwanda') }}</p>
 
 <p>Thank you, and have a great day!</p>
 @endcomponent

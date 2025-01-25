@@ -586,7 +586,7 @@ class UserController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'A reset code has been sent to your email. Please check your inbox.',
+                'message' => 'A reset code has been sent to your email.',
             ], 200); // OK
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Handle validation exceptions
@@ -610,33 +610,28 @@ class UserController extends Controller
     public function code_to_reset_pswd(Request $request, $email){
 
         try {
-        
+            // Validate the code
             $request->validate([
                 'code' => 'required|numeric|digits:6',
             ]);
 
-            if (is_array($request->code)) {
-                $code = implode('', $request->code);
-            } else {
-                $code = $request->code;
-            }
+            $code = $request->input('code'); // Get code from body
 
+            // Find the registered code from the database
             $register_Code = ResetCodePassword::where('email', $email)->where('code', $code)->first();
 
             if ($register_Code) {
-        
+                // Check if the code is expired (older than 60 minutes)
                 if ($register_Code->created_at->diffInMinutes(now()) > 60) {
                     $register_Code->delete();
                     return response()->json([
                         'status' => 'error',
-                        'message' => 'Your code is expired!',
+                        'message' => 'Your code is expired.',
                     ], 400);
                 } else {
-        
-                    $register_Code->delete();
                     return response()->json([
                         'status' => 'success',
-                        'message_done' => 'code is valid , reset password now !',
+                        'message' => 'Code is valid, reset password now!',
                     ], 200);
                 }
             } else {
@@ -647,24 +642,91 @@ class UserController extends Controller
                 ], 400);
             }
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Handle validation exceptions
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation errors occurred.',
-                'errors' => $e->errors(),
+                'error' => $e->errors(),
             ], 422); // Unprocessable Entity
         } catch (\Exception $e) {
-            // Log the error for debugging
             \Log::error('Code verification failed: ' . $e->getMessage());
-
-            // Handle any other exceptions
             return response()->json([
                 'status' => 'error',
                 'message' => 'An error occurred while processing your request. ' . $e->getMessage(),
             ], 500); // Internal Server Error
         }
+    
     }
 
+    public function resetPassword(Request $request,$email,$code){
+
+        try {
+
+            $request->validate([
+                'password' => 'required|string|min:8|confirmed',
+            ]);
+
+            $password = $request->password;
+
+            $passwordResetCode = ResetCodePassword::where('code', $code)
+                ->where('email', $email)
+                ->first();
+
+            if (!$passwordResetCode) {
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid or expired reset code.',
+                ], 400);
+
+            }
+
+            $user = User::where('email', $passwordResetCode->email)->first();
+            $admin = Admin::where('email', $passwordResetCode->email)->first();
+
+            if ($user) {
+            
+                $user->update(['password' => bcrypt($password)]);
+                $passwordResetCode->delete();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Password updated successfully!',
+                ], 200);
+            } elseif ($admin) {
+                
+                $admin->update(['password' => bcrypt($password)]);
+                $passwordResetCode->delete();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Password updated successfully!',
+                ], 200);
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Email\'s owner not found.',
+            ], 404);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+  
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurred.',
+                'error' => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            
+            \Log::error('Password reset failed: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while processing your request. ' . $e->getMessage(),
+            ], 500);
+        }
+
+    }
 
 
 }
