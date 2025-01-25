@@ -1,17 +1,20 @@
 @component('mail::message')
     <h2>Assalamualaikum Warahmatullahi Wabarakatuh</h2>
     
-    <p>We have a new seeker who has registered on the <b style="color: blue;">{{ config('app.name', 'Job-sphere-rwanda') }}</b> system.</p>
+    We have a new seeker who has registered on the {{ config('app.name', 'Job-sphere-rwanda') }} system.
 
 @component('mail::panel')
     <p>The details are as follows:</p>
 
-    <p><b>Firstname:</b> {{ $firstname }}</p><br>
-    <p><b>Lastname:</b> {{ $lastname }}</p><br>
-    <p><b>Gender:</b> {{ $gender }}</p><br>
-    <p><b>Email:</b> {{ $email }}</p><br>
-    <p><b>Birthdate:</b> {{ $birthdate }}</p>
+    Firstname: {{ $firstname }}
+    Lastname : {{ $lastname }}
+    Gender : {{ $gender }}
+    Email : {{ $email }}
+    Birthdate : {{ $birthdate }}
+    
 @endcomponent
+
+<p>Now you have {{ count_users }} users in {{ config('app.name', 'Job-sphere-rwanda') }}</p>
 
 <p>Thank you, and have a great day!</p>
 @endcomponent

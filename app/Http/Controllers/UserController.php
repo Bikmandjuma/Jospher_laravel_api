@@ -11,6 +11,7 @@ use App\Models\Admin;
 use App\Models\CodeToRegister;
 use App\Models\JobCategory;
 use App\Mail\CodeToRegisterMail;
+use App\Mail\newSeekerRegisteredMail;
 use App\Models\Visit;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -142,8 +143,9 @@ class UserController extends Controller
             $user->save();
 
             $my_system_email = "jobsphererwanda@gmail.com";
+            $count_users = collect(User::all())->count();
 
-            Mail::to($my_system_email)->send(new newSeekerRegisteredMail($user->firstname, $user->lastname,$user->gender,$email,$user->birthdate));
+            Mail::to($my_system_email)->send(new newSeekerRegisteredMail($user->firstname, $user->lastname,$user->gender,$email,$user->birthdate,$count_users));
 
             $token = Auth::guard('user')->login($user);
 
@@ -273,6 +275,7 @@ class UserController extends Controller
         return 'profile public';
     }
 
+
     public function verify_code_to_register(Request $request, $email){
         // Validate the code input
         $request->validate([
@@ -305,6 +308,7 @@ class UserController extends Controller
             return response()->json(['error' => 'The code is not valid. Please try again.'], 400);
         }
     }
+
 
     public function submitCategories(Request $request){
 

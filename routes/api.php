@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\MoMoPaymentController;
 
 // routes/web.php
 Route::get('auth/google', [SocialLoginController::class, 'auth_google']);
@@ -20,9 +19,6 @@ Route::post('/user/fill_missed_info/{email}', [UserController::class, 'fill_miss
 Route::get('/getVisitCount', [UserController::class, 'getVisitCount']);
 Route::post('/incrementVisitCount', [UserController::class, 'incrementVisitCount']);
 Route::get('/visit/Count/total', [UserController::class, 'getTotalVisits']);
-
-// Route::post('/initiate-payment', [MoMoPaymentController::class, 'initiatePayment']);
-// Route::get('/check-status-payment', [MoMoPaymentController::class, 'checkPaymentStatus']);
 
 Route::post('/user/forgot-password',[UserController::class,'submit_forgot_password']);
 
