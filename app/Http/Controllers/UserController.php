@@ -277,36 +277,56 @@ class UserController extends Controller
 
 
     public function verify_code_to_register(Request $request, $email){
-        // Validate the code input
-        $request->validate([
-            'code' => 'required|numeric|digits:6' // Ensure a 6-digit code is required
-        ]);
+        try{
+            // Validate the code input
+            $request->validate([
+                'code' => 'required|numeric|digits:6' // Ensure a 6-digit code is required
+            ]);
 
-        // Check if the code is in an array and implode if so
-        if (is_array($request->code)) {
-            $code = implode('', $request->code);
-        } else {
-            $code = $request->code;
-        }
-
-        // Check if the code exists in the database for the given email
-        $register_Code = CodeToRegister::where('email', $email)->where('code', $code)->first();
-
-        if ($register_Code) {
-            // Check if the code is older than one hour
-            if ($register_Code->created_at->diffInMinutes(now()) > 60) {
-                // Code expired
-                $register_Code->delete();
-                return response()->json(['error' => 'Your code is expired!'], 400);
+            // Check if the code is in an array and implode if so
+            if (is_array($request->code)) {
+                $code = implode('', $request->code);
             } else {
-                // Code is valid, delete the code after use
-                $register_Code->delete();
-                return response()->json(['info' => 'Now fill missed info!'], 200);
+                $code = $request->code;
             }
-        } else {
-            // Code does not match or has expired
-            return response()->json(['error' => 'The code is not valid. Please try again.'], 400);
+
+            // Check if the code exists in the database for the given email
+            $register_Code = CodeToRegister::where('email', $email)->where('code', $code)->first();
+
+            if ($register_Code) {
+                // Check if the code is older than one hour
+                if ($register_Code->created_at->diffInMinutes(now()) > 60) {
+                    // Code expired
+                    $register_Code->delete();
+                    return response()->json(['error' => 'Your code is expired!'], 400);
+                } else {
+                    // Code is valid, delete the code after use
+                    $register_Code->delete();
+                    return response()->json(['info' => 'Now fill missed info!'], 200);
+                }
+            
+            }else {
+                // Invalid code
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'The code is not valid. Please try again.',
+                ], 400);
+            }
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurred.',
+                'error' => $e->errors(),
+            ], 422); // Unprocessable Entity
+        } catch (\Exception $e) {
+            \Log::error('Code verification failed: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An error occurred while processing your request. ' . $e->getMessage(),
+            ], 500); // Internal Server Error
         }
+
     }
 
 
@@ -645,7 +665,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation errors occurred.',
-                'error' => $e->errors(),
+                'errors' => $e->errors(),
             ], 422); // Unprocessable Entity
         } catch (\Exception $e) {
             \Log::error('Code verification failed: ' . $e->getMessage());
