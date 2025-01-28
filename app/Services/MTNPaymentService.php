@@ -14,7 +14,7 @@ class MTNPaymentService
 
     public function __construct()
     {
-        $this->baseUrl = env('MTN_ENV') === 'sandbox'
+        $this->baseUrl = env('MTN_ENV') === 'production'
             ? 'https://momodeveloper.mtn.com/v1_0/'
             : 'https://sandbox.momodeveloper.mtn.com/v1_0/';
 
