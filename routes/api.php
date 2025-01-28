@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PaymentController;
 
 // routes/web.php
 Route::get('auth/google', [SocialLoginController::class, 'auth_google']);
@@ -37,6 +38,8 @@ Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){
     Route::get('/UserCount_job_category', [UserController::class, 'count_job_category']);
     Route::delete('/remove_job_category/{id}', [UserController::class, 'remove_job_category']);
     Route::post('/modify_password', [UserController::class, 'modify_password']);
+    Route::post('/initiate-payment', [PaymentController::class, 'initiatePayment']);
+    Route::post('/payment-callback', [PaymentController::class, 'handleCallback']);
 });
 
 //Admin routes

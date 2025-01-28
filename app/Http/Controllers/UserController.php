@@ -748,5 +748,26 @@ class UserController extends Controller
 
     }
 
+    public function checkUserAccess(){
+        $user = auth()->user();
+
+        // Retrieve the most recent payment record for the user
+        $payment = Payment::where('user_id', $user->id)
+                          ->orderBy('created_at', 'desc')
+                          ->first();
+
+        if ($payment) {
+            $currentDate = now();
+            if ($currentDate->between($payment->start_date, $payment->end_date)) {
+                return response()->json(['message' => 'Access granted!']);
+            } else {
+                return response()->json(['message' => 'Access expired. Please renew payment.'], 403);
+            }
+        }
+
+        return response()->json(['message' => 'No payment found. Please make a payment.'], 400);
+    }
+
+
 
 }
