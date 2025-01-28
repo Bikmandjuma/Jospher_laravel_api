@@ -20,8 +20,6 @@ class PaymentController extends Controller
         try {
             $request->validate([
                 'phone' => 'required|digits:10',
-                'amount' => 'required|numeric|min:1',
-                'duration' => 'required|numeric|min:1',
             ]);
 
             // Prepare data
