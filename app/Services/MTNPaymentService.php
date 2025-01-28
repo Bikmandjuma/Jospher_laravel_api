@@ -3,39 +3,44 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MTNPaymentService
 {
-    private $userId;  // MTN User ID (X-Reference-Id)
-    private $apiKey;  // MTN API Key
+    private $userId;
+    private $apiKey;
+    private $baseUrl;
 
     public function __construct()
     {
-        // Dynamically generate or retrieve stored user ID and API Key
+        $this->baseUrl = env('MTN_ENV') === 'sandbox'
+            ? 'https://momodeveloper.mtn.com/v1_0/'
+            : 'https://sandbox.momodeveloper.mtn.com/v1_0/';
+
         $this->userId = $this->registerUser();
         $this->apiKey = $this->generateApiKey($this->userId);
     }
 
     /**
-     * Register a new API user (only needed if not already registered).
+     * Register a new API user.
      *
      * @return string
      * @throws \Exception
      */
     private function registerUser(): string
     {
-        $referenceId = (string) Str::uuid(); // Generate a new UUID
+        $referenceId = $this->generateReferenceId();
 
-        $response = Http::withHeaders([
+        $response = $this->makeHttpRequest('POST', 'apiuser', [
+            'providerCallbackHost' => $this->getEnv('MTN_CALLBACK_HOST'),
+        ], [
             'X-Reference-Id' => $referenceId,
             'Content-Type' => 'application/json',
-            'Ocp-Apim-Subscription-Key' => env('MTN_COLLECTION_SUBSCRIPTION_KEY'),
-        ])->post(env('MTN_BASE_URL') . 'apiuser', [
-            'providerCallbackHost' => env('MTN_CALLBACK_HOST'),
         ]);
 
         if (!$response->ok()) {
+            $this->logError('Register User', $response);
             throw new \Exception('Unable to register user: ' . $response->body());
         }
 
@@ -51,11 +56,10 @@ class MTNPaymentService
      */
     private function generateApiKey(string $referenceId): string
     {
-        $response = Http::withHeaders([
-            'Ocp-Apim-Subscription-Key' => env('MTN_COLLECTION_SUBSCRIPTION_KEY'),
-        ])->post(env('MTN_BASE_URL') . "apiuser/{$referenceId}/apikey");
+        $response = $this->makeHttpRequest('POST', "apiuser/{$referenceId}/apikey");
 
         if (!$response->ok()) {
+            $this->logError('Generate API Key', $response);
             throw new \Exception('Unable to generate API key: ' . $response->body());
         }
 
@@ -70,14 +74,14 @@ class MTNPaymentService
      */
     public function getAccessToken(): string
     {
-        $credentials = base64_encode($this->userId . ':' . $this->apiKey);
+        $credentials = $this->generateAuthCredentials();
 
-        $response = Http::withHeaders([
+        $response = $this->makeHttpRequest('POST', 'token/', [], [
             'Authorization' => 'Basic ' . $credentials,
-            'Ocp-Apim-Subscription-Key' => env('MTN_COLLECTION_SUBSCRIPTION_KEY'),
-        ])->post(env('MTN_BASE_URL') . 'token/');
+        ]);
 
         if (!$response->ok()) {
+            $this->logError('Get Access Token', $response);
             throw new \Exception('Unable to fetch access token: ' . $response->body());
         }
 
@@ -95,14 +99,9 @@ class MTNPaymentService
     public function requestToPay(string $payerPhoneNumber, float $amount): array
     {
         $accessToken = $this->getAccessToken();
-        $referenceId = (string) Str::uuid();
+        $referenceId = $this->generateReferenceId();
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $accessToken,
-            'X-Reference-Id' => $referenceId,
-            'X-Target-Environment' => env('MTN_ENV'),
-            'Ocp-Apim-Subscription-Key' => env('MTN_COLLECTION_SUBSCRIPTION_KEY'),
-        ])->post(env('MTN_BASE_URL') . 'requesttopay', [
+        $response = $this->makeHttpRequest('POST', 'requesttopay', [
             'amount' => $amount,
             'currency' => 'RWF',
             'externalId' => $referenceId,
@@ -112,14 +111,14 @@ class MTNPaymentService
             ],
             'payerMessage' => 'Payment Request',
             'payeeNote' => 'Please confirm payment',
-            'callbackUrl' => env('MTN_CALLBACK_URL'),
-            'receiver' => [
-                'partyIdType' => 'MSISDN',
-                'partyId' => $receiverPhoneNumber,
-            ]
+            'callbackUrl' => $this->getEnv('MTN_CALLBACK_URL'),
+        ], [
+            'Authorization' => 'Bearer ' . $accessToken,
+            'X-Reference-Id' => $referenceId,
         ]);
 
         if (!$response->ok()) {
+            $this->logError('Request to Pay', $response);
             throw new \Exception('Unable to initiate payment: ' . $response->body());
         }
 
@@ -141,16 +140,82 @@ class MTNPaymentService
     {
         $accessToken = $this->getAccessToken();
 
-        $response = Http::withHeaders([
+        $response = $this->makeHttpRequest('GET', "requesttopay/{$referenceId}", [], [
             'Authorization' => 'Bearer ' . $accessToken,
-            'X-Target-Environment' => env('MTN_ENV'),
-            'Ocp-Apim-Subscription-Key' => env('MTN_COLLECTION_SUBSCRIPTION_KEY'),
-        ])->get(env('MTN_BASE_URL') . "requesttopay/{$referenceId}");
+        ]);
 
         if (!$response->ok()) {
+            $this->logError('Get Transaction Status', $response);
             throw new \Exception('Unable to fetch transaction status: ' . $response->body());
         }
 
         return $response->json();
+    }
+
+    /**
+     * Generate a unique reference ID.
+     *
+     * @return string
+     */
+    private function generateReferenceId(): string
+    {
+        return (string) Str::uuid();
+    }
+
+    /**
+     * Generate Basic Authentication credentials.
+     *
+     * @return string
+     */
+    private function generateAuthCredentials(): string
+    {
+        return base64_encode($this->userId . ':' . $this->apiKey);
+    }
+
+    /**
+     * Helper to get environment variables.
+     *
+     * @param string $key
+     * @return string
+     */
+    private function getEnv(string $key): string
+    {
+        return env($key);
+    }
+
+    /**
+     * Log error messages for debugging.
+     *
+     * @param string $action
+     * @param \Illuminate\Http\Client\Response $response
+     */
+    private function logError(string $action, $response): void
+    {
+        Log::error("MTN API Error - {$action}: ", [
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+    }
+
+    /**
+     * Make an HTTP request.
+     *
+     * @param string $method
+     * @param string $endpoint
+     * @param array $body
+     * @param array $headers
+     * @return \Illuminate\Http\Client\Response
+     */
+    private function makeHttpRequest(string $method, string $endpoint, array $body = [], array $headers = []): \Illuminate\Http\Client\Response
+    {
+        $baseHeaders = [
+            'Ocp-Apim-Subscription-Key' => $this->getEnv('MTN_COLLECTION_SUBSCRIPTION_KEY'),
+        ];
+
+        $mergedHeaders = array_merge($baseHeaders, $headers);
+
+        return Http::timeout(10)
+            ->withHeaders($mergedHeaders)
+            ->$method($this->baseUrl . $endpoint, $body);
     }
 }
