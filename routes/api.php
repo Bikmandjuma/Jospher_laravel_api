@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SocialLoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PaymentController;
 
 // routes/web.php
@@ -38,11 +39,15 @@ Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){
     Route::get('/UserCount_job_category', [UserController::class, 'count_job_category']);
     Route::delete('/remove_job_category/{id}', [UserController::class, 'remove_job_category']);
     Route::post('/modify_password', [UserController::class, 'modify_password']);
-    Route::post('/initiate-payment', [PaymentController::class, 'initiatePayment']);
-    Route::post('/payment-callback', [PaymentController::class, 'handleCallback']);
+    // Route::post('/payment-callback', [PaymentController::class, 'handleCallback']);
 });
 
-//Admin routes
-Route::group(['prefix'=>'adminauth' , 'middleware'=>'Admin'],function(){
+Route::post('/initiate-payment', [PaymentController::class, 'requestToPay']);
 
+//Admin routes
+Route::group(['prefix'=>'admin' , 'middleware'=>'Admin'],function(){
+    Route::get('/view_info', [AdminController::class, 'View_information']);
+    Route::get('/count_seekers', [AdminController::class, 'count_seekers']);
+    Route::get('/count_seekers_today', [AdminController::class, 'count_seekers_today']);
+    Route::get('/count_online_users', [AdminController::class, 'count_online_users']);
 });

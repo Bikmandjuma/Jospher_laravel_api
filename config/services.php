@@ -2,18 +2,6 @@
 
 return [
 
-    /*
-    |--------------------------------------------------------------------------
-    | Third Party Services
-    |--------------------------------------------------------------------------
-    |
-    | This file is for storing the credentials for third party services such
-    | as Mailgun, Postmark, AWS and more. This file provides the de facto
-    | location for this type of information, allowing packages to have
-    | a conventional file to locate the various service credentials.
-    |
-    */
-
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),
         'secret' => env('MAILGUN_SECRET'),
@@ -38,4 +26,13 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+     'mtn_momo' => [
+        'subscription_key' => env('MOMO_SUBSCRIPTION_KEY'),
+        'api_user_id' => env('MOMO_API_USER_ID'),
+        'api_key' => env('MOMO_API_KEY'),
+        'base_url' => env('MOMO_BASE_URL'),
+        'callback_url' => env('MOMO_CALLBACK_URL'),
+    ],
+
+    
 ];
