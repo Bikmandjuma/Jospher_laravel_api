@@ -29,7 +29,7 @@ Route::post('/code_to_reset_pswd/{email}',[UserController::class,'code_to_reset_
 Route::post('/reset/password/{email}/{code}',[UserController::class,'resetPassword']);
 
 //User/Seeker routes
-Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){
+Route::group(['prefix'=>'user' , 'middleware'=>'Userauth'],function(){
     Route::get('/dashboard', [UserController::class, 'dashboard']);
     Route::get('/profile', [UserController::class, 'profile_picture']);
     Route::get('/view_info', [UserController::class, 'View_information']);
@@ -45,9 +45,12 @@ Route::group(['prefix'=>'user' , 'middleware'=>'User'],function(){
 Route::post('/initiate-payment', [PaymentController::class, 'requestToPay']);
 
 //Admin routes
-Route::group(['prefix'=>'admin' , 'middleware'=>'Admin'],function(){
+Route::group(['prefix'=>'admin' , 'middleware'=>'Adminauth','throttle:100,1'],function(){
     Route::get('/view_info', [AdminController::class, 'View_information']);
     Route::get('/count_seekers', [AdminController::class, 'count_seekers']);
     Route::get('/count_seekers_today', [AdminController::class, 'count_seekers_today']);
     Route::get('/count_online_users', [AdminController::class, 'count_online_users']);
+    Route::post('/update_password', [AdminController::class, 'update_password']);
+    Route::post('/update_info', [AdminController::class, 'edit_info']);
+
 });
