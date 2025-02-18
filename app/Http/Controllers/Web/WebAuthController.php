@@ -37,7 +37,6 @@ class WebAuthController extends Controller
                 return 'Login successful!';
             }
 
-            // Return error if authentication fails
             return back()->withErrors([
                 'username' => 'Invalid Username or Password, try again!',
             ])->withInput();
