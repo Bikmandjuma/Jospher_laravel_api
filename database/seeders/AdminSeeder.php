@@ -17,7 +17,7 @@ class AdminSeeder extends Seeder
             'lastname' =>'Djuma',
             'gender' => 'male',
             'phone' => '0785389000',
-            'email' => 'ntiruhungwab@gmail.com',
+            'email' => 'admin@gmail.com',
             'image' => 'user.png',
             'dob' => '1994-12-20',
             'password' => bcrypt('bugarama'),

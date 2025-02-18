@@ -3,49 +3,53 @@
 return [
 
     'defaults' => [
-        'guard' => 'api', // Default guard
-        'passwords' => 'users', // Default password reset option
+        'guard' => 'web',
+        'passwords' => 'users',
     ],
 
     'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+
         'api' => [
             'driver' => 'jwt',
             'provider' => 'users',
         ],
 
-        'admin' => [
-            'driver' => 'jwt',
-            'provider' => 'admins',
-        ],
-
         'user' => [
-            'driver' => 'jwt', // JSON Web Token authentication for users
-            'provider' => 'users', // Users provider
+            'driver' => 'jwt',
+            'provider' => 'users',
         ],
     ],
 
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class, // Model for users
+            'model' => App\Models\User::class,
         ],
 
         'admins' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Admin::class, // Model for admins
+            'model' => App\Models\Admin::class,
         ],
     ],
-
 
     'passwords' => [
         'users' => [
-            'provider' => 'users', // Matches the users provider
-            'table' => 'password_reset_tokens', // Password reset tokens table
-            'expire' => 60, // Token expiry time in minutes
-            'throttle' => 60, // Throttle password reset attempts
+            'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
         ],
     ],
 
-    'password_timeout' => 10800, // Timeout for password confirmation in seconds
+    'password_timeout' => 10800,
 
 ];

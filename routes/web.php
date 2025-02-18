@@ -1,22 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Web\WebAuthController;
+use App\Http\Controllers\Web\AdminController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+// Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['prefix'=>'admin' , 'middleware'=>'adminAuth'],function(){
+    route::get('/dashboard',function(){
+        return "admin dashboard !";
+    });
 });
 
-Route::get('/testing',function(){
-    return "testing...";
+Route::get('/', function () {
+    return "Testing....";
 });

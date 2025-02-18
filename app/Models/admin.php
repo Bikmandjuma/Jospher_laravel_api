@@ -5,17 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Admin extends Authenticatable implements JWTSubject
+class Admin extends Authenticatable
 {
     protected $table='admins';
     protected $guarded = array();
     use HasApiTokens, HasFactory, Notifiable;
-
-    protected $fillable = [
+    protected $fillable=[
         'firstname',
         'lastname',
         'gender',
@@ -45,25 +41,5 @@ class Admin extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'dob' => 'date',
     ];
-
-    /**
-     * Get the identifier that will be stored in the JWT payload.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
-    {
-        return $this->getKey(); // Typically the user ID, or you could use a custom identifier
-    }
-
-    /**
-     * Get the custom claims to be added to the JWT payload.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return []; // You can return any custom claims you want to include in the JWT payload
-    }
 
 }
