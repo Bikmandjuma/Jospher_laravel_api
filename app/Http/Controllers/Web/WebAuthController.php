@@ -14,7 +14,7 @@ class WebAuthController extends Controller
     public function login(Request $request)
     {
         try {
-            // Validate input fields
+
             $request->validate([
                 'username' => 'required|string',
                 'password' => 'required|string',
@@ -23,7 +23,6 @@ class WebAuthController extends Controller
                 'password.required' => 'The password is required.',
             ]);
 
-            // Determine if the username is an email or phone number
             $loginField = filter_var($request->input('username'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
             // Attempt to authenticate with the 'admin' guard
