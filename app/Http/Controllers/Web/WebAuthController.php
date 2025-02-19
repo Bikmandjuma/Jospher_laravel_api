@@ -25,7 +25,6 @@ class WebAuthController extends Controller
 
             $loginField = filter_var($request->input('username'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-            // Attempt to authenticate with the 'admin' guard
             if (Auth::guard('admin')->attempt([
                 $loginField => $request->input('username'),
                 'password' => $request->input('password'),
