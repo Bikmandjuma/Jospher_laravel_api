@@ -10,8 +10,12 @@ use App\Models\Admin;
 
 class WebAuthController extends Controller
 {
+    public function login_form(Request $request)
+    {
+        return view('admin.auth.login');
+    }
 
-    public function login(Request $request)
+    public function submit_login(Request $request)
     {
         try {
 

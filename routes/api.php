@@ -36,9 +36,3 @@ Route::group(['prefix'=>'user' , 'middleware'=>'userAuth'],function(){
     // Route::post('/payment-callback', [PaymentController::class, 'handleCallback']);
 });
 
-
-Route::group(['prefix'=>'user' , 'middleware'=>'userAuth'],function(){
-	route::get('/dashboard',function(){
-		return "user dashboard !";
-	});
-});

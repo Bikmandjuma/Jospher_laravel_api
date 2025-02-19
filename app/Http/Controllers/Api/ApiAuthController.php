@@ -1,16 +1,18 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApiAuthController extends Controller
 {
-    public function login(Request $request){
-        
+    // Example function to login and generate token
+    public function login(Request $request)
+    {
         try {
             // Validate input fields
             $request->validate([
@@ -70,9 +72,8 @@ class ApiAuthController extends Controller
         }
     }
 
-
-    public function logout(Request $request){
-        
+    public function logout(Request $request)
+    {
         Auth::logout();
 
         // Invalidate the session
@@ -82,9 +83,8 @@ class ApiAuthController extends Controller
         $request->session()->regenerateToken();
 
         return response()->json([
-            'status', 'Success.',
-            'message', 'You have been logged out.'
+            'status' => 'success',
+            'message' => 'You have been logged out.'
         ]);
-
     }
 }

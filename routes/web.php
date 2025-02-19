@@ -14,5 +14,9 @@ Route::group(['prefix'=>'admin' , 'middleware'=>'adminAuth','throttle:100,1'],fu
     Route::get('/count_online_users', [AdminController::class, 'count_online_users']);
     Route::post('/update_password', [AdminController::class, 'update_password']);
     Route::post('/update_info', [AdminController::class, 'edit_info']);
-
 });
+
+Route::get('/home', [AdminController::class, 'home']);
+
+Route::get('/', [WebAuthController::class, 'login_form']);
+Route::post('/submit_login', [WebAuthController::class, 'submit_login']);
