@@ -26,10 +26,17 @@
                     >
                       All users
                     </h6>
-                    <span class="text-xl font-semibold">{{ $all_users_count }}</span>
+                    <span class="text-xl font-semibold" id="allUsersCount">{{ $allUsersCount }}</span>
                     <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
                       100%
                     </span>
+                    <br>
+                    <hr class="p-2">
+                    <h6
+                      class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light mt-1"
+                    >
+                      Partial users <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md" id="partialCountUsers">{{ $partialCountUsers }}</span>
+                    </h6>
                   </div>
                   <div>
                     <span>
@@ -63,6 +70,13 @@
                     <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
                       0%
                     </span>
+                    <br>
+                    <hr class="p-2">
+                    <h6
+                      class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light mt-1"
+                    >
+                      All visits <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md" id="allVisitCount">{{ $allVisitCount }}</span>
+                    </h6>
                   </div>
                   <div>
                   	<span>
@@ -91,12 +105,19 @@
                     <h6
                       class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light"
                     >
-                      User join today
+                      User joined today
                     </h6>
-                    <span class="text-xl font-semibold">{{ $todays_users_joined_count }}</span>
-                    <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
-                      {{ $percent_today_count_users }}%
+                    <span class="text-xl font-semibold" id="user_joined_today_count">{{ $user_joined_today_count }}</span>
+                    <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md mb-1" id="percent_user_joined_today">
+                      {{ $percent_user_joined_today  }}
                     </span>
+                    <br>
+                    <hr class="p-2">
+                    <h6
+                      class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light mt-1"
+                    >
+                      Today visits <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md" id="todaysVisitCount">{{ $todaysVisitCount }}</span>
+                    </h6>
                   </div>
                   <div>
                     <span>
@@ -120,38 +141,46 @@
 
                 <!-- Tickets card -->
                 <div class="flex items-center justify-between p-4 bg-white rounded-md dark:bg-darker">
-                  <!-- <div>
-                    <h6
-                      class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light"
-                    >
-                      Online users
-                    </h6>
-                    <span class="text-xl font-semibold">{{ $online_users_count }}</span>
-                    <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
-                      0%
-                    </span>
-                  </div> -->
-                  <!-- resources/views/your-blade-template.blade.php -->
-
+            
                   <div>
                     <h6 class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light">
                       Online users
                     </h6>
-                    <span class="text-xl font-semibold" id="online-users-count">{{ $online_users_count }}</span>
+                    <span class="text-xl font-semibold" id="online-users-count">{{ $online_user_count }}</span>
                     <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md" id="percent_online_user_count">
                       {{ $percent_online_user_count }}
                     </span>
+                    <br>
+                    <hr class="p-2">
+                    <h6
+                      class="text-xs font-medium leading-none tracking-wider text-gray-500 uppercase dark:text-primary-light mt-1"
+                    >
+                      Yesterday visits <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md" id="yesterdaysVisitCount"> {{ $yesterdaysVisitCount }}</span>
+                    </h6>
                   </div>
 
                   <script>
                     // Function to fetch online users count from the backend
                     function fetchOnlineUsersCount() {
-                        fetch('/admin/online-users')
+                        fetch('/refresh_counts')
                             .then(response => response.json())
                             .then(data => {
                                 // Update the online user count in the HTML
-                                document.getElementById('online-users-count').innerText = data.count;
+                                document.getElementById('online-users-count').innerText = data.online_user_count;
                                 document.getElementById('percent_online_user_count').innerText=data.percent_online_user_count;
+                                document.getElementById('percent_user_joined_today').innerText = data.percent_user_joined_today;
+                                document.getElementById('user_joined_today_count').innerText = data.user_joined_today_count;
+
+                                document.getElementById('todaysVisitCount').innerText = data.todaysVisitCount;
+
+                                document.getElementById('yesterdaysVisitCount').innerText = data.yesterdaysVisitCount;
+
+                                document.getElementById('allVisitCount').innerText = data.allVisitCount;
+
+                                document.getElementById('allUsersCount').innerText = data.allUsersCount;
+
+                                document.getElementById('partialCountUsers').innerText = data.partialCountUsers;
+
                             })
                             .catch(error => {
                                 console.error('Error fetching online users count:', error);

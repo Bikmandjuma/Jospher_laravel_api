@@ -15,14 +15,9 @@ Route::group(['prefix'=>'admin' , 'middleware'=>'adminAuth','throttle:100,1'],fu
     Route::post('/update_password', [AdminController::class, 'update_password']);
     Route::post('/update_info', [AdminController::class, 'edit_info']);
     Route::post('/logout', [WebAuthController::class, 'logout'])->name('admin.logout');
-    Route::get('/online-users', [AdminController::class, 'online_users'])->name('admin.online-users');
+    
 });
-
-Route::get('/randing', function() {
-    $number = 4.5555555;
-    $truncatedNumber = substr(number_format($number, 2, '.', ''), 0, -1);
-    return $truncatedNumber;
-});
+Route::get('/refresh_counts', [AdminController::class, 'refresh_counts'])->name('admin.refresh_counts');
 
 Route::get('/', [WebAuthController::class, 'login_form'])->name('admin.login');
 Route::post('/submit_login', [WebAuthController::class, 'submit_login'])->name('admin.submit.login');
