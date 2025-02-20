@@ -19,6 +19,7 @@ class Admin extends Authenticatable
         'gender',
         'phone',
         'email',
+        'role',
         'image',
         'dob',
         'password',

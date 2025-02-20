@@ -10,6 +10,15 @@
     />
 
     <link rel="stylesheet" href="{{ URL::to('/') }}/auth/build/css/tailwind.css" />
+    <!-- resources/views/layouts/app.blade.php -->
+
+    <!-- Toastr CSS -->
+    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <!-- Toastr JS -->
+    <script src="{{ mix('js/app.js') }}"></script>
+    <!-- In the <head> section or before </body> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.3/dist/alpine.min.js" defer></script>
     <script src="{{ URL::to('/') }}/auth/build/js/script.js"></script>

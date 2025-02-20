@@ -17,7 +17,6 @@ class WebAuthController extends Controller
 
     public function submit_login(Request $request)
     {
-        try {
 
             $request->validate([
                 'username' => 'required|string',
@@ -35,26 +34,14 @@ class WebAuthController extends Controller
             ])) {
                 $request->session()->regenerate(); // Prevent session fixation attacks
                 
-                // return redirect()->route('admin.dashboard')->with('success', 'Login successful!');
-                return 'Login successful!';
+                return redirect()->route('admin.dashboard')->with('info', 'Welcome '.Auth::guard('admin')->user()->firstname);
             }
 
-            return back()->withErrors([
-                'username' => 'Invalid Username or Password, try again!',
-            ])->withInput();
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()->withErrors($e->errors())->withInput();
-        } catch (\Exception $e) {
-            \Log::error('Login failed', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+            return back()->with([
+                'error' => 'Invalid username/password, try again !',
             ]);
+            // toastr()->success('Password changed successfully',['timeOut' => 5000]);
 
-            return back()->withErrors([
-                'error' => 'An unexpected error occurred. Please try again later.',
-            ])->withInput();
-        }
     }
 
     public function logout(Request $request)
@@ -65,8 +52,7 @@ class WebAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // return redirect()->route('admin.login')->with('success', 'You have been logged out.');
-        return 'logout system !';
+        return redirect()->route('admin.login')->with('info', 'You have been logged out.');
     }
 
 }

@@ -1,3 +1,3 @@
 import './bootstrap';
-
-// No Vue code here anymore
+import 'toastr/build/toastr.min.css';
+import toastr from 'toastr';
