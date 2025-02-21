@@ -12,6 +12,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="{{ URL::to('/') }}/auth/build/css/tailwind.css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     <script src="{{ mix('js/app.js') }}"></script>
     <!-- In the <head> section or before </body> -->
@@ -44,10 +46,8 @@
               <div x-data="{ isActive: true, open: true}">
                 <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
                 <a
-                  href="#"
-                  @click="$event.preventDefault(); open = !open"
-                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
-                  :class="{'bg-primary-100 dark:bg-primary': isActive || open}"
+                  href="{{ route('admin.dashboard') }}"
+                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary  {{ Request::segment(2) == 'dashboard' ? 'bg-primary-100 dark:bg-primary' : '' }}"
                   role="button"
                   aria-haspopup="true"
                   :aria-expanded="(open || isActive) ? 'true' : 'false'"
@@ -80,8 +80,7 @@
                 <a
                   href="#"
                   @click="$event.preventDefault(); open = !open"
-                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
-                  :class="{'bg-primary-100 dark:bg-primary': isActive || open}"
+                  class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary {{ Request::segment(2) == 'display_paid_users' ? 'bg-primary-100 dark:bg-primary' : '' }}"
                   role="button"
                   aria-haspopup="true"
                   :aria-expanded="(open || isActive) ? 'true' : 'false'"
@@ -128,7 +127,7 @@
                     All users
                   </a>
                   <a
-                    href="auth/login.html"
+                    href="{{route('admin.display_paid_users')}}"
                     role="menuitem"
                     class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md dark:hover:text-light hover:text-gray-700"
                   >
@@ -716,10 +715,8 @@
                 <div x-data="{ isActive: true, open: true}">
                   <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
                   <a
-                    href="#"
-                    @click="$event.preventDefault(); open = !open"
-                    class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
-                    :class="{'bg-primary-100 dark:bg-primary': isActive || open}"
+                    href="{{ route('admin.dashboard') }}"
+                    class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary {{ Request::segment(2) == 'dashboard' ? 'bg-primary-100 dark:bg-primary' : '' }}"
                     role="button"
                     aria-haspopup="true"
                     :aria-expanded="(open || isActive) ? 'true' : 'false'"
@@ -752,8 +749,8 @@
                   <a
                     href="#"
                     @click="$event.preventDefault(); open = !open"
-                    class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
-                    :class="{'bg-primary-100 dark:bg-primary': isActive || open}"
+                    class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary {{ Request::segment(2) == 'display_paid_users' ? 'bg-primary-100 dark:bg-primary' : '' }}"
+                    
                     role="button"
                     aria-haspopup="true"
                     :aria-expanded="(open || isActive) ? 'true' : 'false'"
@@ -800,7 +797,7 @@
                       All users
                     </a>
                     <a
-                      href="auth/login.html"
+                      href="{{route('admin.display_paid_users')}}"
                       role="menuitem"
                       class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md dark:hover:text-light hover:text-gray-700"
                     >
@@ -885,12 +882,13 @@
             </div>
           </header>
 
-          
+          <main>
             @yield('content')
+          </main>
 
           <!-- Main footer -->
           <footer
-            class="flex items-center justify-between p-4 bg-white border-t dark:bg-darker dark:border-primary-darker"
+            class="flex items-center justify-between p-4 bg-white border-t dark:bg-darker dark:border-primary-darker sticky bottom-0 z-50"
           >
             <div>Jospher &copy; 2023</div>
             <div>

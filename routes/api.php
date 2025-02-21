@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Models\Payment;
+use Carbon\Carbon;
 
 Route::post('/login', [ApiAuthController::class, 'login']);
 Route::post('/logout', [ApiAuthController::class, 'logout']);
@@ -34,5 +36,28 @@ Route::group(['prefix'=>'user' , 'middleware'=>'userAuth'],function(){
     Route::delete('/remove_job_category/{id}', [UserController::class, 'remove_job_category']);
     Route::post('/modify_password', [UserController::class, 'modify_password']);
     // Route::post('/payment-callback', [PaymentController::class, 'handleCallback']);
+});
+
+Route::get('/checkUserAccess',[UserController::class,'checkUserAccess']);
+
+Route::get('/testing_payment', function () {
+    $user_id = 2;
+    $payment = Payment::where('user_id', $user_id)
+        ->orderBy('created_at', 'desc')
+        ->first();
+
+    if ($payment) {
+        $currentDate = Carbon::today(); // Use today() instead of now()
+        $startDate = Carbon::parse($payment->start_date)->startOfDay();
+        $endDate = Carbon::parse($payment->end_date)->endOfDay(); // Ensure it includes the entire last day
+
+        if ($currentDate->between($startDate, $endDate)) {
+            return response()->json(['message' => 'Access granted!']);
+        } else {
+            return response()->json(['message' => 'Access expired. Please renew payment.'], 403);
+        }
+    }
+
+    return response()->json(['message' => 'No payment found. Please make a payment.'], 400);
 });
 

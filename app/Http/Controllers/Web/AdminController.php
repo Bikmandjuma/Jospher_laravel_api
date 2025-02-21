@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Models\Visit;
+use App\Models\Payment;
 
 class AdminController extends Controller
 {
@@ -124,5 +126,72 @@ class AdminController extends Controller
         ]);
 
     }
+
+    public function display_paid_users(Request $request){
+        
+        // $users = User::where('firstname','!=',null)->orderBy('user_code','desc')->paginate(10);
+
+        $payments = Payment::with('user')->paginate(10);
+        $totatAmount = Payment::all()->sum('amount');
+        $count_payee = collect(Payment::all())->count();
+        $count = 1;
+        return view('admin.user.paid_users', [
+            'payments' => $payments,
+            'totatAmount' => $totatAmount,
+            'count_payee' => $count_payee,
+            'count' => $count,
+        ]);
+    }
+
+    public function search_users_payment(Request $request){
+        
+        $query = User::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->Where('user_code', 'like', "%$search%")
+                  ->orWhere('firstname', 'like', "%$search%")
+                  ->orWhere('lastname', 'like', "%$search%");
+            });
+        }
+
+        $users = $query->paginate(10);
+
+        return view('admin.user.SearchUser_ready_ToPay', compact('users'));
+    }
+
+    public function assign_payment_ToUser($id){
+        $user_id=Crypt::decrypt($id);
+        $users = User::all()->where('id',$user_id);
+        return view('admin.user.assign_payment_ToUser',[
+            'user_id' => $user_id,
+            'users' => $users
+        ]);
+    }
+
+    public function submit_payment_ToUser(Request $request,$id){
+        $request->validate([
+            'amount' => 'required|numeric',
+            'duration' => 'required|integer|min:1',
+        ]);
+
+        $user_id = $id;
+        $currentDate = Carbon::now();
+
+        $payment = new Payment();
+        $payment->user_id = $user_id;
+        $payment->amount = $request->amount;
+        $payment->duration = $request->duration;
+        $payment->start_date = $currentDate;
+        $payment->end_date = $currentDate->copy()->addMonths($request->duration);
+        $payment->active_days = $request->duration * 30;
+        $payment->save();
+
+        return redirect()->route('admin.display_paid_users')->with(
+            'info' , 'Payment created successfully',
+        );
+    }
+
 
 }
