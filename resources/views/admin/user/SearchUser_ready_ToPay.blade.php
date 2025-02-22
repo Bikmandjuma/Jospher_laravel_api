@@ -112,7 +112,7 @@
                           aria-hidden
                           class="absolute inset-0 bg-green-200 opacity-50 rounded-full"
                         ></span>
-                        <span class="relative">Pay</span>
+                        <span class="relative">Assign payment</span>
                       </a>
                     </td>
                     <!-- <td

@@ -3,7 +3,8 @@
 
   <div class="flex-col min-h-screen">
     <div class="flex items-center justify-between px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
-      <h1 class="text-2xl font-semibold">Paid users</h1>
+      <h1 class="text-2xl font-semibold">Paid users
+      &nbsp;<span class="rounded-md text-white focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dar bg-primary px-2 mt-1">{{ $count_payee }}</span></h1>
         <a
                 href="{{ url('/admin/view_all_users') }}"
                 class="px-4 py-2 text-sm text-white rounded-md bg-primary hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark"
@@ -12,9 +13,9 @@
         </a>
     </div>
 
-    <div class="container mx-auto p-4">
+    <div class="container mx-auto p-2">
         <!-- Search Form -->
-        <div class="mb-6" style="position:relative;align-items: center;justify-content: center;justify-items: center;text-align: center;">
+        <div class="mb-1" style="position:relative;align-items: center;justify-content: center;justify-items: center;text-align: center;">
             <form method="GET" action="{{ url('/admin/search_users_payment') }}" class="flex justify-between items-center">
                 <div class="flex space-x-4">
                     <input
@@ -34,10 +35,7 @@
 
       <div class="container mx-auto px-4 sm:px-8">
         <div class="py-8">
-          <div>
-            <h2 class="text-2xl font-semibold leading-tight">Paid users&nbsp;<span class="rounded-md text-white focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dar bg-primary px-2 mt-1">{{ $count_payee }}</span>
-            </h2>
-          </div>
+          
           <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             <div
               class="inline-block min-w-full shadow-md rounded-lg overflow-hidden"

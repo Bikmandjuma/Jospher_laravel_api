@@ -31,7 +31,10 @@ class AdminController extends Controller
         $allVisitCount = Visit::all()->sum('count');
         #end of visit count
 
-        return  view('admin.user.home',[
+        $paidUsersCount = Payment::all()->count();
+        $percentPaidUsersCount = ( $paidUsersCount * 100 )/$count_users;
+
+        return view('admin.user.home',[
             'allUsersCount' => $all_count_users,
             'partialCountUsers' => $partial_count_users,
             'user_joined_today_count' => $user_joined_today_count,
@@ -41,6 +44,8 @@ class AdminController extends Controller
             'todaysVisitCount' => $todaysVisitCount,
             'yesterdaysVisitCount' => $yesterdaysVisitCount,
             'allVisitCount' => $allVisitCount,
+            'paidUsersCount' => $paidUsersCount,
+            'percentPaidUsersCount' => $percentPaidUsersCount,
     	]);
     }
 
@@ -170,7 +175,30 @@ class AdminController extends Controller
         ]);
     }
 
-    public function submit_payment_ToUser(Request $request,$id){
+    // public function submit_payment_ToUser(Request $request,$id){
+    //     $request->validate([
+    //         'amount' => 'required|numeric',
+    //         'duration' => 'required|integer|min:1',
+    //     ]);
+
+    //     $user_id = $id;
+    //     $currentDate = Carbon::now();
+
+    //     $payment = new Payment();
+    //     $payment->user_id = $user_id;
+    //     $payment->amount = $request->amount;
+    //     $payment->duration = $request->duration;
+    //     $payment->start_date = $currentDate;
+    //     $payment->end_date = $currentDate->copy()->addMonths($request->duration);
+    //     $payment->active_days = $request->duration * 30;
+    //     $payment->save();
+
+    //     return redirect()->route('admin.display_paid_users')->with(
+    //         'info' , 'Payment created successfully',
+    //     );
+    // }
+
+    public function submit_payment_ToUser(Request $request, $id){
         $request->validate([
             'amount' => 'required|numeric',
             'duration' => 'required|integer|min:1',
@@ -178,6 +206,19 @@ class AdminController extends Controller
 
         $user_id = $id;
         $currentDate = Carbon::now();
+
+        // Find the latest payment for the user
+        $latestPayment = Payment::where('user_id', $user_id)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if ($latestPayment) {
+            $endDate = Carbon::parse($latestPayment->end_date);
+
+            if ($currentDate->lessThanOrEqualTo($endDate)) {
+                return redirect()->back()->with('error', 'User already has an active subscription. Please wait until it expires.');
+            }
+        }
 
         $payment = new Payment();
         $payment->user_id = $user_id;
@@ -189,7 +230,7 @@ class AdminController extends Controller
         $payment->save();
 
         return redirect()->route('admin.display_paid_users')->with(
-            'info' , 'Payment created successfully',
+            'info', 'Payment created successfully'
         );
     }
 

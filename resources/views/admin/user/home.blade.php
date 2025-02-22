@@ -65,9 +65,9 @@
                     >
                       Paid users
                     </h6>
-                    <span class="text-xl font-semibold">0</span>
+                    <span class="text-xl font-semibold">{{ $paidUsersCount }}</span>
                     <span class="inline-block px-2 py-px ml-2 text-xs text-green-500 bg-green-100 rounded-md">
-                      0%
+                      {{ $percentPaidUsersCount }}%
                     </span>
                     <br>
                     <hr class="p-2">
@@ -191,6 +191,7 @@
 
                     // Set interval to refresh the online users count every 5 seconds (5000ms)
                     setInterval(fetchOnlineUsersCount, 1000); // Update every 5 seconds
+
                   </script>
 
                   <div>

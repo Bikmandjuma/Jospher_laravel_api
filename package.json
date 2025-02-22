@@ -2,8 +2,12 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite",
-        "build": "vite build"
+        // "dev": "vite",
+        // "build": "vite build",
+        "dev": "npm run development",
+        "development": "webpack --config webpack.dev.js",
+        "production": "webpack --config webpack.prod.js",
+        "prod": "npm run production"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.19",

@@ -36,28 +36,6 @@ Route::group(['prefix'=>'user' , 'middleware'=>'userAuth'],function(){
     Route::delete('/remove_job_category/{id}', [UserController::class, 'remove_job_category']);
     Route::post('/modify_password', [UserController::class, 'modify_password']);
     // Route::post('/payment-callback', [PaymentController::class, 'handleCallback']);
+    
+    Route::get('/checkUserAccess',[UserController::class,'checkUserAccess']);
 });
-
-Route::get('/checkUserAccess',[UserController::class,'checkUserAccess']);
-
-Route::get('/testing_payment', function () {
-    $user_id = 2;
-    $payment = Payment::where('user_id', $user_id)
-        ->orderBy('created_at', 'desc')
-        ->first();
-
-    if ($payment) {
-        $currentDate = Carbon::today(); // Use today() instead of now()
-        $startDate = Carbon::parse($payment->start_date)->startOfDay();
-        $endDate = Carbon::parse($payment->end_date)->endOfDay(); // Ensure it includes the entire last day
-
-        if ($currentDate->between($startDate, $endDate)) {
-            return response()->json(['message' => 'Access granted!']);
-        } else {
-            return response()->json(['message' => 'Access expired. Please renew payment.'], 403);
-        }
-    }
-
-    return response()->json(['message' => 'No payment found. Please make a payment.'], 400);
-});
-
