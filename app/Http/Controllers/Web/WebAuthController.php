@@ -15,8 +15,7 @@ class WebAuthController extends Controller
         return view('admin.auth.login');
     }
 
-    public function submit_login(Request $request)
-    {
+    public function submit_login(Request $request){
 
             $request->validate([
                 'username' => 'required|string',
@@ -32,7 +31,7 @@ class WebAuthController extends Controller
                 $loginField => $request->input('username'),
                 'password' => $request->input('password'),
             ])) {
-                $request->session()->regenerate(); // Prevent session fixation attacks
+                $request->session()->regenerate();
                 
                 return redirect()->route('admin.dashboard')->with('info', 'Welcome '.Auth::guard('admin')->user()->firstname);
             }
@@ -40,7 +39,6 @@ class WebAuthController extends Controller
             return back()->with([
                 'error' => 'Invalid username/password, try again !',
             ]);
-            // toastr()->success('Password changed successfully',['timeOut' => 5000]);
 
     }
 
