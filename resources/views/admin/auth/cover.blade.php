@@ -11,6 +11,7 @@
       />
 
       <link rel="stylesheet" href="{{ URL::to('/') }}/auth/build/css/tailwind.css" />
+      <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
       <!-- Vite CSS -->
       @vite('resources/css/app.css')

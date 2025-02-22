@@ -23,16 +23,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
-        // Force HTTPS in production
-        // if (App::environment('production')) {
-        //     URL::forceScheme('https');
-        // }
 
-        // Additional production-specific configurations
-        // if (App::environment('production')) {
-            // Configure any production-specific services, settings, etc.
-            // Example: Configure a custom cache setting
-        //     config(['cache.default' => 'redis']);
-        // }
+        if (App::environment() === "production") {
+            URL::forceScheme("https");
+        }
+        
     }
 }
