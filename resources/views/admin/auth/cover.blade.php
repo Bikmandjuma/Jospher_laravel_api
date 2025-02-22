@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ config('app.name','laravel') }}</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&display=swap"
-      rel="stylesheet"
-    />
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>{{ config('app.name','laravel') }}</title>
 
-    <link rel="stylesheet" href="{{ URL::to('/') }}/auth/build/css/tailwind.css" />
-    <!-- resources/views/layouts/app.blade.php -->
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&display=swap"
+        rel="stylesheet"
+      />
 
-    <!-- Toastr CSS -->
-    <!-- <link href="{{ mix('css/app.css') }}" rel="stylesheet"> -->
-    <!-- Toastr JS -->
-    <!-- <script src="{{ mix('js/app.js') }}"></script> -->
-    <!-- In the <head> section or before </body> -->
-    <link href="{{ mix('build/assets/app-T0Y5PVxv.css') }}" rel="stylesheet">
-    <script src="{{ mix('build/assets/app-BxBWMrbF.js ') }}"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+      <link rel="stylesheet" href="{{ URL::to('/') }}/auth/build/css/tailwind.css" />
 
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.3/dist/alpine.min.js" defer></script>
-    <script src="{{ URL::to('/') }}/auth/build/js/script.js"></script>
+      <!-- Vite CSS -->
+      @vite('resources/css/app.css')
+      
+      <!-- Vite JS -->
+      @vite('resources/js/app.js')
+
+      <!-- Toastr CSS -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+      <!-- Toastr JS -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+      <!-- Alpine JS -->
+      <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.3/dist/alpine.min.js" defer></script>
+
+      <!-- Custom script -->
+      <script src="{{ URL::to('/') }}/auth/build/js/script.js"></script>
 
   </head>
+
   <body>
     <div x-data="setup()" x-init="$refs.loading.classList.add('hidden'); setColors(color);" :class="{ 'dark': isDark}">
       <!-- Loading screen -->

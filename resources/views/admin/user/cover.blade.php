@@ -7,24 +7,32 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>{{ config('app.name','jsr') }}</title>
+
+    <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;700;900&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="{{ URL::to('/') }}/auth/build/css/tailwind.css" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-<!--     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-    <script src="{{ mix('js/app.js') }}"></script> -->
-    <link href="{{ mix('build/assets/app-T0Y5PVxv.css') }}" rel="stylesheet">
-    <script src="{{ mix('build/assets/app-BxBWMrbF.js ') }}"></script>
-    <!-- In the <head> section or before </body> -->
+    <!-- Vite CSS and JS -->
+    @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
+
+    <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+    <!-- Alpine JS -->
     <script src="https://cdn.jsdelivr.net/gh/alpine-collective/alpine-magic-helpers@0.5.x/dist/component.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.3/dist/alpine.min.js" defer></script>
-  </head>
+
+</head>
+
   <body>
     <div x-data="setup()" x-init="$refs.loading.classList.add('hidden'); setColors(color);" :class="{ 'dark': isDark}">
       <div class="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
