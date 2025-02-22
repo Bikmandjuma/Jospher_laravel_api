@@ -17,23 +17,33 @@ class AdminController extends Controller
         $all_count_users = collect(User::all())->count();
         $count_users = collect(User::all()->where('firstname','!=',null))->count();
         $partial_count_users = collect(User::all()->where('firstname',null))->count();
+        $paidUsersCount = Payment::all()->count();
     	
         $user_joined_today_count = User::whereDate('created_at', now()->toDateString())->count();
         
         $onlineUsersCount = User::where('last_active_at', '>=', now()->subMinutes(5))->count();
 
-        $percent_online_user_count = ( $onlineUsersCount * 100 ) / $count_users;
-        $percent_today_count_users = ( $user_joined_today_count * 100 ) / $count_users; 
+        // $percent_online_user_count = ( $onlineUsersCount * 100 ) / $count_users;
+        // $percent_today_count_users = ( $user_joined_today_count * 100 ) / $count_users; 
+
+         if ($count_users > 0) {
+            // Calculate percentages
+            $percent_online_user_count = ($onlineUsersCount * 100) / $count_users;
+            $percent_today_count_users = ($user_joined_today_count * 100) / $count_users;
+            $percentPaidUsersCount = ($paidUsersCount * 100) / $count_users;
+        } else {
+            // Default values if $count_users is zero
+            $percent_online_user_count = 0;
+            $percent_today_count_users = 0;
+            $percentPaidUsersCount = 0;
+        }
 
         #start of visit count
         $todaysVisitCount = Visit::whereDate('date', Carbon::today())->sum('count');    
         $yesterdaysVisitCount = Visit::whereDate('date', Carbon::yesterday())->sum('count');
         $allVisitCount = Visit::all()->sum('count');
         #end of visit count
-
-        $paidUsersCount = Payment::all()->count();
-        $percentPaidUsersCount = ( $paidUsersCount * 100 )/$count_users;
-
+        
         return view('admin.user.home',[
             'allUsersCount' => $all_count_users,
             'partialCountUsers' => $partial_count_users,
@@ -56,12 +66,26 @@ class AdminController extends Controller
         
         $onlineUsersCount = User::where('last_active_at', '>=', now()->subMinutes(5))->count();
 
-        $percent_online_user_count = ( $onlineUsersCount * 100 ) / $count_users;
+        // $percent_online_user_count = ( $onlineUsersCount * 100 ) / $count_users;
+
+        #start User_joined_today
+        // $user_joined_today_count = User::whereDate('created_at', now()->toDateString())->count();
+        // $percent_user_joined_today = ( $user_joined_today_count * 100 ) / $count_users;
+        #end User_joined_today
+        if ($count_users > 0) {
+            $percent_online_user_count = ($onlineUsersCount * 100) / $count_users;
+        } else {
+            $percent_online_user_count = 0;
+        }
 
         #start User_joined_today
         $user_joined_today_count = User::whereDate('created_at', now()->toDateString())->count();
-        $percent_user_joined_today = ( $user_joined_today_count * 100 ) / $count_users;
-        #end User_joined_today
+        // $percent_user_joined_today = ( $user_joined_today_count * 100 ) / $count_users;
+        if ($count_users > 0) {
+            $percent_user_joined_today = ($user_joined_today_count * 100) / $count_users;
+        } else {
+            $percent_user_joined_today = 0;
+        }
 
         #start visit count
         $todaysVisitCount = Visit::whereDate('date', Carbon::today())->sum('count');    
