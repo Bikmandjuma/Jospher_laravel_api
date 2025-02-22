@@ -14,8 +14,10 @@
     <link rel="stylesheet" href="{{ URL::to('/') }}/auth/build/css/tailwind.css" />
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
-    <script src="{{ mix('js/app.js') }}"></script>
+<!--     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <script src="{{ mix('js/app.js') }}"></script> -->
+    <link href="{{ mix('build/assets/app-T0Y5PVxv.css') }}" rel="stylesheet">
+    <script src="{{ mix('build/assets/app-BxBWMrbF.js ') }}"></script>
     <!-- In the <head> section or before </body> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

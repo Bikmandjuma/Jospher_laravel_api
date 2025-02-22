@@ -13,10 +13,12 @@
     <!-- resources/views/layouts/app.blade.php -->
 
     <!-- Toastr CSS -->
-    <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <!-- <link href="{{ mix('css/app.css') }}" rel="stylesheet"> -->
     <!-- Toastr JS -->
-    <script src="{{ mix('js/app.js') }}"></script>
+    <!-- <script src="{{ mix('js/app.js') }}"></script> -->
     <!-- In the <head> section or before </body> -->
+    <link href="{{ mix('build/assets/app-T0Y5PVxv.css') }}" rel="stylesheet">
+    <script src="{{ mix('build/assets/app-BxBWMrbF.js ') }}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
