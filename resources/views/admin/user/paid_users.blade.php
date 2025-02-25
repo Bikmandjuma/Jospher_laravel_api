@@ -163,16 +163,20 @@
 
                 @empty
                 <tr>
-                    <td colspan="4" class="p-3 text-center text-gray-700">No results found</td>
+                    <td colspan="5" class="p-3 text-center text-gray-700">No results found</td>
                 </tr>
                 <style type="text/css">
                   #pag_id{
                     display: none;
                   }
+
+                  #total_amount{
+                    display: none;
+                  }
                 </style>
                 @endforelse
 
-              <tr>
+              <tr id="total_amount">
                 <td class="px-5 py-5 border-b text-blue-500 border-gray-200 bg-white text-sm">----</td>
 
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-blue-500 text-sm"><b>Total amount</b></td>

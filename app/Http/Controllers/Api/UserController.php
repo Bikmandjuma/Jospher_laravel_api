@@ -775,44 +775,129 @@ class UserController extends Controller
     // }
 
 
-    public function checkUserAccess()
-    {
-        $user_id = Auth::guard('user')->user()->id;
-        // $user_id = 3;
+    // public function checkUserAccess(){
 
-        // Get the latest payment for the user
-        $payment = Payment::where('user_id', $user_id)
-            ->orderBy('created_at', 'desc')
-            ->first();
+    //     // Get the authenticated user ID
+    //     $user_id = Auth::guard('user')->user()->id;
 
-        if ($payment) {
-            $currentDate = Carbon::today();
+    //     if ($user_id) {
+
+    //         // Get all payments for the user, ordered by the created date
+    //         $payments = Payment::where('user_id', $user_id)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get();
+
+    //         // Check if there are any payments
+    //         if ($payments->isNotEmpty()) {
+    //             $currentDate = Carbon::today();
+                
+    //             // Loop through each payment to check if any is valid
+    //             foreach ($payments as $payment) {
+    //                 $startDate = Carbon::parse($payment->start_date)->startOfDay();
+    //                 $endDate = Carbon::parse($payment->end_date)->endOfDay();
+
+    //                 // Check if the current date is within the start and end date of the payment
+    //                 if ($currentDate->between($startDate, $endDate)) {
+    //                     return response()->json([
+    //                         'status' => 'paid',
+    //                         'message' => 'Access granted!',
+    //                         'start_date' => $startDate->toDateString(),
+    //                         'end_date' => $endDate->toDateString(),
+    //                     ]);
+    //                 }
+    //             }
+
+    //             // If no valid payment is found, mark it as overdue
+    //             return response()->json([
+    //                 'status' => 'overdue',
+    //                 'message' => 'Access expired. Please renew payment.',
+    //             ], 403);
+
+    //         } else {
+    //             // If no payment records exist
+    //             return response()->json([
+    //                 'status' => 'no_payment',
+    //                 'message' => 'No payment found. Please make a payment.',
+    //             ], 400);
+    //         }
+            
+    //     } else {
+    //         // If no user is authenticated
+    //         return response()->json([
+    //             'message' => 'No user found in system!',
+    //         ], 401);  // Using 401 for unauthenticated user error code
+    //     }
+    //     }
+
+
+    public function checkUserAccess(){
+        try {
+            // Get the authenticated user ID
+            $user_id = Auth::guard('user')->user()->id;
+            // $user_id = $id;
+
+            // Check if a user is authenticated
+            if (!$user_id) {
+                return response()->json([
+                    'message' => 'No user found in system!',
+                ], 401);  // 401 for unauthenticated user error code
+            }
+
+            // Perform an inner join to check if the user has payments
+            $payment = Payment::join('users', 'users.id', '=', 'payments.user_id')
+                ->where('payments.user_id', $user_id)
+                ->orderBy('payments.created_at', 'desc')
+                ->select('payments.*')
+                ->first();
+
+            // If no payment record exists for the user
+            if (!$payment) {
+                return response()->json([
+                    'status' => 'noPayment',
+                    'message' => 'No payment found. Please make a payment.',
+                ], 400);
+            }
+
+            // If a payment record is found, check if it is valid
+            $currentDate = Carbon::today(); // Get today's date
+
+            // Check the start and end date of the payment
             $startDate = Carbon::parse($payment->start_date)->startOfDay();
             $endDate = Carbon::parse($payment->end_date)->endOfDay();
 
-            // Check if payment is still valid
+            // Debug: Output the payment start and end dates
+            \Log::info('Payment Start Date: ' . $startDate->toDateString());
+            \Log::info('Payment End Date: ' . $endDate->toDateString());
+
+            // Check if the current date is within the start and end date of the payment
             if ($currentDate->between($startDate, $endDate)) {
+                // Debug: Output a success message when access is granted
+                \Log::info('Access Granted');
                 return response()->json([
                     'status' => 'paid',
                     'message' => 'Access granted!',
                     'start_date' => $startDate->toDateString(),
                     'end_date' => $endDate->toDateString(),
                 ]);
-            } else {
-                return response()->json([
-                    'status' => 'overdue',
-                    'message' => 'Access expired. Please renew payment.',
-                    'start_date' => $startDate->toDateString(),
-                    'end_date' => $endDate->toDateString(),
-                ], 403);
             }
+
+            // If the payment is expired
+            return response()->json([
+                'status' => 'overdue',
+                'message' => 'Access expired. Please renew payment.',
+            ], 403);
+
+        } catch (\Exception $e) {
+            // Catch any exceptions and log the error
+            \Log::error('Error in checkUserAccess: ' . $e->getMessage());
+
+            // Return a generic error message with status 500 (Internal Server Error)
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. Please try again later.',
+            ], 500);
         }
 
-        return response()->json([
-            'status' => 'no_payment',
-            'message' => 'No payment found. Please make a payment.',
-        ], 400);
     }
-
 
 }

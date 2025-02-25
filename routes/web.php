@@ -34,7 +34,6 @@ Route::group(['prefix'=>'admin' , 'middleware'=>'adminAuth','throttle:100,1'],fu
     // Route::get('/assign_payment_ToUser/{id}', [AdminController::class, 'assign_payment_ToUser'])->name('admin.assign_payment_ToUser');
 
     Route::post('/submit_payment_ToUser/{id}', [AdminController::class, 'submit_payment_ToUser'])->name('admin.submit_payment_ToUser');
-    
 });
 Route::get('/refresh_counts', [AdminController::class, 'refresh_counts'])->name('admin.refresh_counts');
 

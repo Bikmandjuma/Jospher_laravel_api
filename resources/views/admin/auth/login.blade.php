@@ -45,7 +45,7 @@
             </form>
 
             <!-- Or -->
-            <div class="flex items-center justify-center space-x-2 flex-nowrap">
+           <!--  <div class="flex items-center justify-center space-x-2 flex-nowrap">
               <span class="w-20 h-px bg-gray-300"></span>
               <span>OR</span>
               <span class="w-20 h-px bg-gray-300"></span>
@@ -58,6 +58,6 @@
               
               <span> Forgot password </span>
             </a>
-
+ -->
           </div>
 @endsection
