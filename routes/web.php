@@ -6,8 +6,6 @@ use App\Http\Controllers\Web\AdminController;
 use Carbon\Carbon;
 use App\Models\Payment;
 
-// Route::post('/login', [AuthController::class, 'login']);
-
 //Admin routes
 Route::group(['prefix'=>'admin' , 'middleware'=>'adminAuth','throttle:100,1'],function(){
     
