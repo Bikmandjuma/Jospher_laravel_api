@@ -13,7 +13,7 @@ class Admin extends Authenticatable
 
     // Define the table associated with the model (if not following Laravel's convention)
     protected $table = 'admins';
-    protected $guarded = [];
+    protected $guard = 'admin';
 
     // Define which attributes are mass assignable
     protected $fillable = [
