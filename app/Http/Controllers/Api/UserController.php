@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Payment;
+use App\Models\SeekerContactUs;
+use App\Models\RequestForAdvertisement;
 use Carbon\Carbon;
 use App\Models\CodeToRegister;
 use App\Models\JobCategory;
@@ -899,5 +901,80 @@ class UserController extends Controller
         }
 
     }
+
+    // Start of send request ads
+    public function request_advertisment(Request $request){
+
+        try {
+            // Validate request
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'description' => 'required|string',
+            ]);
+
+            // Store data using mass assignment
+            RequestForAdvertisement::create($validated);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Request sent successfully',
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurred.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Submission failed: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. Please try again later.'
+            ], 500);
+        }
+    }
+    // End of request ads   
+
+
+    #start of contact us
+    public function contact_us(Request $request){
+
+        try {
+            // Validate request
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'subject' => 'required|string',
+                'message' => 'required|string',
+            ]);
+
+            // Store data using mass assignment
+            SeekerContactUs::create($validated);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Message sent !',
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation errors occurred.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Submission failed: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong. Please try again later.'
+            ], 500);
+        }
+    }
+
+    #end of contact us 
 
 }

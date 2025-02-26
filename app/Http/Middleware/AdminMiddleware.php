@@ -16,10 +16,10 @@ class AdminMiddleware
      * @param  string|null $guard
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function handle(Request $request, Closure $next, $guard = 'admin'): Response
+    public function handle(Request $request, Closure $next, $guard = null): Response
     {
         // Check if the user is authenticated using the given guard
-        if (Auth::guard($guard)->guest()) {
+        if (Auth::guard('admin')->guest()) {
             // If it's an AJAX or JSON request, return Unauthorized
             if ($request->ajax() || $request->wantsJson()) {
                 return response('Unauthorized.', 401);

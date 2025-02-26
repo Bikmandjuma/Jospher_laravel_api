@@ -39,3 +39,6 @@ Route::group(['prefix'=>'user' , 'middleware'=>'userAuth'],function(){
     
     Route::get('/checkUserAccess',[UserController::class,'checkUserAccess']);
 });
+
+    Route::post('/guest/request_advertisment',[UserController::class,'request_advertisment']);
+    Route::post('/guest/contact_us',[UserController::class,'contact_us']);
