@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
-use App\Models\Admin;
+use App\Models\Owner;
 use App\Models\Payment;
 use App\Models\SeekerContactUs;
 use App\Models\RequestForAdvertisement;
@@ -32,13 +32,13 @@ class UserController extends Controller
             // Validate request data
             $validatedData = $request->validate([
                 'user_name' => 'required|string|max:255',
-                'email' => 'required|email|max:100|unique:users,email|unique:admins,email',
+                'email' => 'required|email|max:100|unique:users,email|unique:owners,email',
                 'phone' => [
                     'required',
                     'numeric',
                     'digits:10',
                     'unique:users,phone',
-                    'unique:admins,phone',
+                    'unique:owners,phone',
                     'regex:/^(072|078|073|079)\d{7}$/',
                 ],
             ]);
@@ -223,13 +223,13 @@ class UserController extends Controller
                     'digits:10',
                     'regex:/^(072|078|073|079)\d{7}$/',
                     'unique:users,phone,' . $userId,
-                    'unique:admins,phone,',
+                    'unique:owners,phone,',
                 ],
                     'email' => [
                     'required',
                     'email',
                     'unique:users,email,' . $userId,
-                    'unique:admins,email,' . $userId,
+                    'unique:owners,email,' . $userId,
                 ],
                     'birthdate' => [
                     'required',
@@ -584,7 +584,7 @@ class UserController extends Controller
             $email = $request->input('email');
 
             // Check if email exists in Admins or Users table
-            $existsInAdmins = Admin::where('email', $email)->exists();
+            $existsInAdmins = Owner::where('email', $email)->exists();
             $existsInUsers = User::where('email', $email)->exists();
 
             if (!$existsInAdmins && !$existsInUsers) {
