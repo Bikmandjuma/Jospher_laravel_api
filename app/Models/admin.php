@@ -11,7 +11,8 @@ class Admin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'admins'; // Define table if different from Laravel's default
+    protected $table = 'admins';
+    protected $guarded = [];
 
     protected $fillable = [
         'firstname',
