@@ -27,13 +27,13 @@ class WebAuthController extends Controller
 
             $loginField = filter_var($request->input('username'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
 
-            if (Auth::guard('admin')->attempt([
+            if (Auth::guard('owner')->attempt([
                 $loginField => $request->input('username'),
                 'password' => $request->input('password'),
             ])) {
                 $request->session()->regenerate();
                 
-                return redirect()->route('admin.dashboard')->with('info', 'Welcome '.Auth::guard('admin')->user()->firstname);
+                return redirect()->route('admin.dashboard')->with('info', 'Welcome '.Auth::guard('owner')->user()->firstname);
             }
 
             return back()->with([
@@ -44,7 +44,7 @@ class WebAuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::guard('admin')->logout();
+        Auth::guard('owner')->logout();
 
         // Invalidate the session
         $request->session()->invalidate();

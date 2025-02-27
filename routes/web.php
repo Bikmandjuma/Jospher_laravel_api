@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use App\Models\Payment;
 
 //Admin routes
-Route::group(['prefix'=>'admin' , 'middleware'=>'adminAuth','throttle:100,1'],function(){
+Route::group(['prefix'=>'owner' , 'middleware'=>'ownerAuth','throttle:100,1'],function(){
     
     Route::get('/dashboard', [AdminController::class, 'home'])->name('admin.dashboard');
     

@@ -51,7 +51,7 @@
             <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto">
               <!-- Dashboards links -->
               <div class="text-center justify-center items-center">
-                  {{ Auth()->guard('admin')->user()->firstname }}
+                  {{ Auth()->guard('owner')->user()->firstname }}
               </div>
               <div x-data="{ isActive: true, open: true}">
                 <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
@@ -458,7 +458,7 @@
                       role="menuitem"
                       class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary text-center"
                     >
-                      {{ Auth()->guard('admin')->user()->lastname }}
+                      {{ Auth()->guard('owner')->user()->lastname }}
                     </a>
                     <hr>
                     <a
@@ -662,7 +662,7 @@
                       role="menuitem"
                       class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary text-center"
                     >
-                      {{ Auth()->guard('admin')->user()->firstname }}
+                      {{ Auth()->guard('owner')->user()->firstname }}
                     </a>
                     <hr>
                     <a
@@ -720,7 +720,7 @@
               <nav aria-label="Main" class="px-2 py-4 space-y-2">
                 <!-- Dashboards links -->
                 <div class="text-center justify-center items-center">
-                  {{ Auth()->guard('admin')->user()->firstname }}
+                  {{ Auth()->guard('owner')->user()->firstname }}
                 </div>
                 <div x-data="{ isActive: true, open: true}">
                   <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->

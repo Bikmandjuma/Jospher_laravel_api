@@ -10,12 +10,12 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'admins',
+            'provider' => 'owners',
         ],
 
-        'admin' => [
+        'owner' => [
             'driver' => 'session',
-            'provider' => 'admins',
+            'provider' => 'owners',
         ],
 
         'api' => [
@@ -35,9 +35,9 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'admins' => [
+        'owners' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Admin::class,
+            'model' => App\Models\Owner::class,
         ],
     ],
 

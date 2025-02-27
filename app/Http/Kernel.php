@@ -41,7 +41,7 @@ class Kernel extends HttpKernel
 
         ],
 
-        'admin' => [
+        'owner' => [
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -86,7 +86,7 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'adminAuth' => \App\Http\Middleware\AdminMiddleware::class,
+        'ownerAuth' => \App\Http\Middleware\OwnerMiddleware::class,
         'userAuth' => \App\Http\Middleware\UserMiddleware::class,
     ];
 }
