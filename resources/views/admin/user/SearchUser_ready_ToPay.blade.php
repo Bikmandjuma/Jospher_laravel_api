@@ -5,7 +5,7 @@
     <div class="flex items-center justify-between px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
       <h1 class="text-2xl font-semibold">Paid users</h1>
         <a
-                href="{{ route('admin.display_paid_users') }}"
+                href="{{ route('owner.display_paid_users') }}"
                 class="px-4 py-2 text-sm text-white rounded-md bg-primary hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark"
               >
                 View paid users
@@ -15,7 +15,7 @@
     <div class="container mx-auto p-4">
         <!-- Search Form -->
         <div class="mb-6" style="position:relative;align-items: center;justify-content: center;justify-items: center;text-align: center;">
-            <form method="GET" action="{{ url('/admin/search_users_payment') }}" class="flex justify-between items-center">
+            <form method="GET" action="{{ url('/owner/search_users_payment') }}" class="flex justify-between items-center">
                 <div class="flex space-x-4">
                     <input
                         type="text"
@@ -106,7 +106,7 @@
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                       <a
                         class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
-                        href="{{ route('admin.assign_payment_ToUser',Crypt::encrypt($user->id)) }}"
+                        href="{{ route('owner.assign_payment_ToUser',Crypt::encrypt($user->id)) }}"
                       >
                         <span
                           aria-hidden

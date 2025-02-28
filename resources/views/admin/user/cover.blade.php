@@ -56,7 +56,7 @@
               <div x-data="{ isActive: true, open: true}">
                 <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
                 <a
-                  href="{{ route('admin.dashboard') }}"
+                  href="{{ route('owner.dashboard') }}"
                   class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary  {{ Request::segment(2) == 'dashboard' ? 'bg-primary-100 dark:bg-primary' : '' }}"
                   role="button"
                   aria-haspopup="true"
@@ -130,14 +130,14 @@
                   <!-- active & hover classes 'text-gray-700 dark:text-light' -->
                   <!-- inActive classes 'text-gray-400 dark:text-gray-400' -->
                   <a
-                    href="auth/register.html"
+                    href="{{ url('/owner/view_all_users') }}"
                     role="menuitem"
                     class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md dark:hover:text-light hover:text-gray-700"
                   >
                     All users
                   </a>
                   <a
-                    href="{{route('admin.display_paid_users')}}"
+                    href="{{route('owner.display_paid_users')}}"
                     role="menuitem"
                     class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md dark:hover:text-light hover:text-gray-700"
                   >
@@ -145,7 +145,7 @@
                   </a>
 
                   <a
-                    href="auth/login.html"
+                    href="{{ url('/owner/view_all_users_joined_today') }}"
                     role="menuitem"
                     class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md dark:hover:text-light hover:text-gray-700"
                   >
@@ -155,9 +155,7 @@
                 </div>
               </div>
 
-              <!-- Layouts links -->
-              <div x-data="{ isActive: false, open: false}">
-                <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
+              <!-- <div x-data="{ isActive: false, open: false}">
                 <a
                   href="#"
                   @click="$event.preventDefault(); open = !open"
@@ -185,7 +183,6 @@
                   </span>
                   <span class="ml-2 text-sm"> Job_Category/Position </span>
                   <span aria-hidden="true" class="ml-auto">
-                    <!-- active class 'rotate-180' -->
                     <svg
                       class="w-4 h-4 transition-transform transform"
                       :class="{ 'rotate-180': open }"
@@ -199,8 +196,6 @@
                   </span>
                 </a>
                 <div x-show="open" class="mt-2 space-y-2 px-7" role="menu" aria-label="Layouts">
-                  <!-- active & hover classes 'text-gray-700 dark:text-light' -->
-                  <!-- inActive classes 'text-gray-400 dark:text-gray-400' -->
                   <a
                     href="layouts/two-columns-sidebar.html"
                     role="menuitem"
@@ -216,7 +211,7 @@
                     Job positions
                   </a>
                 </div>
-              </div>
+              </div> -->
             </nav>
 
             <!-- Sidebar footer -->
@@ -705,7 +700,7 @@
               </nav>
             </div>
 
-            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+            <form id="logout-form" action="{{ route('owner.logout') }}" method="POST" style="display: none;">
                 @csrf
                 @method('POST')
             </form>
@@ -725,7 +720,7 @@
                 <div x-data="{ isActive: true, open: true}">
                   <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
                   <a
-                    href="{{ route('admin.dashboard') }}"
+                    href="{{ route('owner.dashboard') }}"
                     class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary {{ Request::segment(2) == 'dashboard' ? 'bg-primary-100 dark:bg-primary' : '' }}"
                     role="button"
                     aria-haspopup="true"
@@ -800,14 +795,14 @@
                     <!-- active & hover classes 'text-gray-700 dark:text-light' -->
                     <!-- inActive classes 'text-gray-400 dark:text-gray-400' -->
                     <a
-                      href="auth/register.html"
+                      href="{{ url('/owner/view_all_users') }}"
                       role="menuitem"
                       class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md dark:hover:text-light hover:text-gray-700"
                     >
                       All users
                     </a>
                     <a
-                      href="{{route('admin.display_paid_users')}}"
+                      href="{{route('owner.display_paid_users')}}"
                       role="menuitem"
                       class="block p-2 text-sm text-gray-400 transition-colors duration-200 rounded-md dark:hover:text-light hover:text-gray-700"
                     >
@@ -824,10 +819,8 @@
                     
                   </div>
                 </div>
-
-                <!-- Layouts links -->
+<!-- 
                 <div x-data="{ isActive: false, open: false}">
-                  <!-- active & hover classes 'bg-primary-100 dark:bg-primary' -->
                   <a
                     href="#"
                     @click="$event.preventDefault(); open = !open"
@@ -855,7 +848,6 @@
                     </span>
                     <span class="ml-2 text-sm"> Job_Category/Position </span>
                     <span aria-hidden="true" class="ml-auto">
-                      <!-- active class 'rotate-180' -->
                       <svg
                         class="w-4 h-4 transition-transform transform"
                         :class="{ 'rotate-180': open }"
@@ -869,8 +861,6 @@
                     </span>
                   </a>
                   <div x-show="open" class="mt-2 space-y-2 px-7" role="menu" aria-label="Layouts">
-                    <!-- active & hover classes 'text-gray-700 dark:text-light' -->
-                    <!-- inActive classes 'text-gray-400 dark:text-gray-400' -->
                     <a
                       href="layouts/two-columns-sidebar.html"
                       role="menuitem"
@@ -887,7 +877,7 @@
                     </a>
 
                   </div>
-                </div>
+                </div> -->
               </nav>
             </div>
           </header>

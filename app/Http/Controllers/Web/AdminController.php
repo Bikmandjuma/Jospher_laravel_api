@@ -184,9 +184,7 @@ class AdminController extends Controller
                   ->orWhere('lastname', 'like', "%$search%");
             });
         }
-
         $users = $query->paginate(10);
-
         return view('admin.user.SearchUser_ready_ToPay', compact('users'));
     }
 
@@ -253,9 +251,24 @@ class AdminController extends Controller
         $payment->active_days = $request->duration * 30;
         $payment->save();
 
-        return redirect()->route('admin.display_paid_users')->with(
+        return redirect()->route('owner.display_paid_users')->with(
             'info', 'Payment created successfully'
         );
+    }
+
+    public function view_all_users(){
+        $users = User::where('firstname','!=',null)->paginate(10);
+        $count_users = $users->count();
+
+        return view('admin.user.view_all_users',compact('users','count_users'));
+    }
+
+    public function view_all_users_joined_today(){
+        $users = User::whereDate('created_at', now()->toDateString())->where('firstname','!=',null)->paginate(10);
+
+        $count_users = $users->count();
+
+        return view('admin.user.view_all_users_joined_today',compact('users','count_users'));
     }
 
 
