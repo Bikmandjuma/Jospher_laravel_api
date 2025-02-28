@@ -33,7 +33,7 @@ class WebAuthController extends Controller
             ])) {
                 $request->session()->regenerate();
                 
-                return redirect()->route('admin.dashboard')->with('info', 'Welcome '.Auth::guard('owner')->user()->firstname);
+                return redirect()->route('owner.dashboard')->with('info', 'Welcome '.Auth::guard('owner')->user()->firstname);
             }
 
             return back()->with([
@@ -50,7 +50,7 @@ class WebAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('admin.login')->with('info', 'You have been logged out.');
+        return redirect()->route('owner.login')->with('info', 'You have been logged out.');
     }
 
 }
