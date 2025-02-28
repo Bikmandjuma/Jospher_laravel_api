@@ -706,7 +706,7 @@ class UserController extends Controller
             }
 
             $user = User::where('email', $passwordResetCode->email)->first();
-            $admin = Admin::where('email', $passwordResetCode->email)->first();
+            $admin = Owner::where('email', $passwordResetCode->email)->first();
 
             if ($user) {
             
