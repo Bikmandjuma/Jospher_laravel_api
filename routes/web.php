@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\WebAuthController;
 use App\Http\Controllers\Web\AdminController;
 
-//Admin routes
 Route::group(['prefix'=>'owner' , 'middleware'=>'ownerAuth','throttle:100,1'],function(){
     
     Route::get('/dashboard', [AdminController::class, 'home'])->name('owner.dashboard');
@@ -30,8 +29,6 @@ Route::group(['prefix'=>'owner' , 'middleware'=>'ownerAuth','throttle:100,1'],fu
     Route::get('/search_users_payment', [AdminController::class, 'search_users_payment'])->name('owner.search_users_payment');
 
     Route::get('/assign_payment_ToUser/{id}', [AdminController::class, 'assign_payment_ToUser'])->name('owner.assign_payment_ToUser');
-
-    // Route::get('/assign_payment_ToUser/{id}', [AdminController::class, 'assign_payment_ToUser'])->name('admin.assign_payment_ToUser');
 
     Route::post('/submit_payment_ToUser/{id}', [AdminController::class, 'submit_payment_ToUser'])->name('owner.submit_payment_ToUser');
 });
