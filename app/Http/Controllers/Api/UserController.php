@@ -307,7 +307,7 @@ class UserController extends Controller
                 } else {
                     // Code is valid, delete the code after use
                     $register_Code->delete();
-                    return response()->json(['info' => 'Now fill missed info!'], 200);
+                    return response()->json(['info' => 'Code is valid , Now fill missed info!'], 200);
                 }
             
             }else {
@@ -333,7 +333,6 @@ class UserController extends Controller
         }
 
     }
-
 
     public function submitCategories(Request $request){
 
@@ -385,15 +384,7 @@ class UserController extends Controller
 
     public function fetch_user_job_Categories()
     {
-        // $userId = Auth::guard('user')->user()->id;
 
-        // $jobCategories = JobCategory::where('user_fk_id', $userId)
-        //                              ->pluck('category_name');
-
-        // return response()->json([
-        //     'categ_id' => $jobCategories->id,
-        //     'skills' => $jobCategories
-        // ]);
         $userId = Auth::guard('user')->user()->id;
 
         $jobCategories = JobCategory::where('user_fk_id', $userId)
@@ -456,20 +447,6 @@ class UserController extends Controller
         }
         
     }
-
-    // public function getVisitCount()
-    // {
-    //     $today = now()->toDateString();
-    //     $visit = Visit::where('date', $today)->first();
-
-    //     return response()->json(['count' => $visit ? $visit->count : 0]);
-    // }
-
-    // public function getTotalVisits()
-    // {
-    //     $total = Visit::sum('count');
-    //     return response()->json(['total' => $total]);
-    // }
 
     public function getVisitCount()
     {
@@ -752,85 +729,6 @@ class UserController extends Controller
         }
 
     }
-
-    // public function checkUserAccess(){
-    
-        // $user_id = Auth::guard('user')->user()->id;
-        
-        // $payment = Payment::where('user_id', $user_id)
-        //     ->orderBy('created_at', 'desc')
-        //     ->first();
-
-        // if ($payment) {
-        //     $currentDate = Carbon::today();
-        //     $startDate = Carbon::parse($payment->start_date)->startOfDay();
-        //     $endDate = Carbon::parse($payment->end_date)->endOfDay();
-
-        //     if ($currentDate->between($startDate, $endDate)) {
-        //         return response()->json(['message' => 'Access granted!']);
-        //     } else {
-        //         return response()->json(['message' => 'Access expired. Please renew payment.'], 403);
-        //     }
-        // }
-
-        // return response()->json(['message' => 'No payment found. Please make a payment.'], 400);
-    // }
-
-
-    // public function checkUserAccess(){
-
-    //     // Get the authenticated user ID
-    //     $user_id = Auth::guard('user')->user()->id;
-
-    //     if ($user_id) {
-
-    //         // Get all payments for the user, ordered by the created date
-    //         $payments = Payment::where('user_id', $user_id)
-    //             ->orderBy('created_at', 'desc')
-    //             ->get();
-
-    //         // Check if there are any payments
-    //         if ($payments->isNotEmpty()) {
-    //             $currentDate = Carbon::today();
-                
-    //             // Loop through each payment to check if any is valid
-    //             foreach ($payments as $payment) {
-    //                 $startDate = Carbon::parse($payment->start_date)->startOfDay();
-    //                 $endDate = Carbon::parse($payment->end_date)->endOfDay();
-
-    //                 // Check if the current date is within the start and end date of the payment
-    //                 if ($currentDate->between($startDate, $endDate)) {
-    //                     return response()->json([
-    //                         'status' => 'paid',
-    //                         'message' => 'Access granted!',
-    //                         'start_date' => $startDate->toDateString(),
-    //                         'end_date' => $endDate->toDateString(),
-    //                     ]);
-    //                 }
-    //             }
-
-    //             // If no valid payment is found, mark it as overdue
-    //             return response()->json([
-    //                 'status' => 'overdue',
-    //                 'message' => 'Access expired. Please renew payment.',
-    //             ], 403);
-
-    //         } else {
-    //             // If no payment records exist
-    //             return response()->json([
-    //                 'status' => 'no_payment',
-    //                 'message' => 'No payment found. Please make a payment.',
-    //             ], 400);
-    //         }
-            
-    //     } else {
-    //         // If no user is authenticated
-    //         return response()->json([
-    //             'message' => 'No user found in system!',
-    //         ], 401);  // Using 401 for unauthenticated user error code
-    //     }
-    //     }
-
 
     public function checkUserAccess(){
         try {
