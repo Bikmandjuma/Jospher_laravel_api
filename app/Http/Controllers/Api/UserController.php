@@ -28,7 +28,112 @@ use App\Services\SendGridService;
 class UserController extends Controller
 {
 
-    public function register(Request $request){
+    // public function register(Request $request){
+    //     try {
+    //         // Validate request data
+    //         $validatedData = $request->validate([
+    //             'user_name' => 'required|string|max:255',
+    //             'email' => 'required|email|max:100|unique:users,email|unique:owners,email',
+    //             'phone' => [
+    //                 'required',
+    //                 'numeric',
+    //                 'digits:10',
+    //                 'unique:users,phone',
+    //                 'unique:owners,phone',
+    //                  'regex:/^(072|078|073|079)\d{7}$/',
+    //             ],
+    //         ]);
+
+    //         // Create seeker_code logic...
+    //         $lastUserCode = DB::table('users')->max('user_code');
+    //         if ($lastUserCode) {
+    //             preg_match('/\d+$/', $lastUserCode, $matches);
+    //             $sequenceNumber = isset($matches[0]) ? (int)$matches[0] + 1 : 1;
+    //         } else {
+    //             $sequenceNumber = 1;
+    //         }
+
+    //         $prefix = date('y');
+    //         $middle = 'JSR';
+    //         $formattedNumber = str_pad($sequenceNumber, 5, '0', STR_PAD_LEFT);
+    //         $seeker_code = $prefix . $middle . $formattedNumber;
+
+    //         // Create the user
+    //         $user = User::create([
+    //             'user_code' => $seeker_code,
+    //             'provider_name' => 'Usual_reg',
+    //             'user_name' => $request->user_name,
+    //             'email' => $request->email,
+    //             'phone' => $request->phone,
+    //         ]);
+
+    //         // Log the  user creation for debugging
+    //         \Log::info('User created: ' . $user->id);
+
+    //         // Log the successful token creation
+    //         $token = Auth::guard('user')->login($user);
+    //         \Log::info('Auth token generated: ' . $token);
+
+    //         // Delete old codes for this email
+    //         CodeToRegister::where('email', $user->email)->delete();
+
+    //         // Generate a new verification code
+    //         $data = [
+    //             'email' => $user->email,
+    //             'code' => mt_rand(100000, 999999),
+    //         ];
+
+    //         // Store the new code in the database
+    //         $got_data = CodeToRegister::create($data);
+
+    //         // Send the email with the verification code
+    //         // Mail::to($user->email)->send(new CodeToRegisterMail($got_data->email,$got_data->code));
+            
+    //         $email = $got_data->email;
+            
+    //         $code = $got_data->code;
+
+    //         // Render Blade template to HTML
+    //         $html = view('emails.code_to_register', ['code' => $code])->render();
+
+    //         // Send reset code via SendGrid
+    //         SendGridService::send(
+    //             $reset_data->$email,
+    //             'Code to Register',
+    //             $html
+    //         );
+
+    //         // Return response
+    //         return response()->json([
+    //             'status' => 'success',
+    //             'message' => 'User created successfully',
+    //             'user' => $user,
+    //             'authorisation' => [
+    //                 'token' => $token,
+    //                 'type' => 'bearer',
+    //             ]
+    //         ]);
+            
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         // Return validation errors as JSON response
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Validation errors occurred.',
+    //             'errors' => $e->errors() // This will return the validation error details
+    //         ], 422);
+    //     } catch (\Exception $e) {
+    //         // Log the error to Laravel logs
+    //         \Log::error('Registration failed: ' . $e->getMessage());
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Registration failed. ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    public function register(Request $request)
+    {
         try {
             // Validate request data
             $validatedData = $request->validate([
@@ -44,15 +149,9 @@ class UserController extends Controller
                 ],
             ]);
 
-            // Create seeker_code logic...
+            // Generate user code
             $lastUserCode = DB::table('users')->max('user_code');
-            if ($lastUserCode) {
-                preg_match('/\d+$/', $lastUserCode, $matches);
-                $sequenceNumber = isset($matches[0]) ? (int)$matches[0] + 1 : 1;
-            } else {
-                $sequenceNumber = 1;
-            }
-
+            $sequenceNumber = $lastUserCode ? (int) preg_replace('/\D/', '', $lastUserCode) + 1 : 1;
             $prefix = date('y');
             $middle = 'JSR';
             $formattedNumber = str_pad($sequenceNumber, 5, '0', STR_PAD_LEFT);
@@ -67,12 +166,8 @@ class UserController extends Controller
                 'phone' => $request->phone,
             ]);
 
-            // Log the  user creation for debugging
-            \Log::info('User created: ' . $user->id);
-
-            // Log the successful token creation
+            // Generate auth token
             $token = Auth::guard('user')->login($user);
-            \Log::info('Auth token generated: ' . $token);
 
             // Delete old codes for this email
             CodeToRegister::where('email', $user->email)->delete();
@@ -83,11 +178,18 @@ class UserController extends Controller
                 'code' => mt_rand(100000, 999999),
             ];
 
-            // Store the new code in the database
+            // Store the code
             $got_data = CodeToRegister::create($data);
 
-            // Send the email with the verification code
-            Mail::to($user->email)->send(new CodeToRegisterMail($got_data->email,$got_data->code));
+            // Render HTML from Blade
+            $html = view('emails.code_to_register', ['code' => $got_data->code])->render();
+
+            // Send via SendGrid
+            SendGridService::send(
+                $got_data->email,
+                'Code to Register',
+                $html
+            );
 
             // Return response
             return response()->json([
@@ -99,24 +201,22 @@ class UserController extends Controller
                     'type' => 'bearer',
                 ]
             ]);
-            
+
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Return validation errors as JSON response
             return response()->json([
                 'status' => 'error',
                 'message' => 'Validation errors occurred.',
-                'errors' => $e->errors() // This will return the validation error details
+                'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            // Log the error to Laravel logs
             \Log::error('Registration failed: ' . $e->getMessage());
-
             return response()->json([
                 'status' => 'error',
                 'message' => 'Registration failed. ' . $e->getMessage()
             ], 500);
         }
     }
+
 
     // Start of fill missed info
     public function fill_missed_info(Request $request, $email){
