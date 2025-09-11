@@ -6,6 +6,10 @@ use App\Http\Controllers\Api\ApiAuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Models\Payment;
 use Carbon\Carbon;
+use App\Http\Controllers\TestEmailController;
+
+Route::get('/send-test-email', [TestEmailController::class, 'sendTest']);
+
 
 Route::post('/login', [ApiAuthController::class, 'login']);
 Route::post('/logout', [ApiAuthController::class, 'logout']);
@@ -42,3 +46,9 @@ Route::group(['prefix'=>'user' , 'middleware'=>'userAuth'],function(){
 
     Route::post('/guest/request_advertisment',[UserController::class,'request_advertisment']);
     Route::post('/guest/contact_us',[UserController::class,'contact_us']);
+
+Route::get('/mifotra-proxy', function () {
+    $json = file_get_contents('https://recruitment.mifotra.gov.rw/api/recruitment/open-advertisements');
+    return response($json)->header('Content-Type', 'application/json');
+});
+

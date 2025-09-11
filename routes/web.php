@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\WebAuthController;
 use App\Http\Controllers\Web\AdminController;
+use Illuminate\Support\Facades\Http;
 
 Route::group(['prefix'=>'owner' , 'middleware'=>'ownerAuth','throttle:100,1'],function(){
     
@@ -36,3 +37,55 @@ Route::get('/refresh_counts', [AdminController::class, 'refresh_counts'])->name(
 
 Route::get('/', [WebAuthController::class, 'login_form'])->name('owner.login');
 Route::post('/submit_login', [WebAuthController::class, 'submit_login'])->name('owner.submit.login');
+
+// routes/web.php
+// Route::get('/proxy/env', function () {
+//     $response = Http::get('https://recruitment.mifotra.gov.rw/api/recruitment/open-advertisements');
+//     return response($response->body(), $response->status())
+//         ->header('Content-Type', $response->header('Content-Type'));
+// });
+
+// Route::get('/proxy/env', function () {
+//     $response = Http::withHeaders([
+//         'Accept-Encoding' => 'gzip, deflate',
+//         'Accept' => 'application/json'
+//     ])->get('https://recruitment.mifotra.gov.rw/api/recruitment/open-advertisements');
+
+//     return $response->json(); // this will parse JSON if available
+// });
+
+// Route::get('/proxy/env', function () {
+//     $raw = Http::get('https://recruitment.mifotra.gov.rw/api/recruitment/open-advertisements')->body();
+
+//     // try decompressing
+//     $decoded = @gzdecode($raw);
+
+//     return response($decoded ?: $raw)
+//         ->header('Content-Type', 'application/json');
+// });
+
+Route::get('/proxy/env', function () {
+    $response = Http::withHeaders([
+        'Accept-Encoding' => 'gzip, deflate',
+        'Accept' => 'application/json',
+    ])->get('https://recruitment.mifotra.gov.rw/api/recruitment/open-advertisements');
+
+    // get raw binary
+    $raw = $response->getBody()->getContents();
+
+    // decompress gzip
+    $decoded = @gzdecode($raw);
+
+    if ($decoded === false) {
+        return response()->json(['error' => 'Failed to decompress API response']);
+    }
+
+    // parse JSON
+    $json = json_decode($decoded, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return response()->json(['error' => 'Failed to parse JSON']);
+    }
+
+    return response()->json($json);
+});
