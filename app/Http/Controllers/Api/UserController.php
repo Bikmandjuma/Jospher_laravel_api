@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\ResetCodePassword;
 use App\Mail\SendCodeResetPasswordMail;
 use Illuminate\Support\Facades\Validator;
+use App\Services\SendGridService;
 
 class UserController extends Controller
 {
@@ -546,16 +547,15 @@ class UserController extends Controller
         
     }
 
-    // Forgot Password API
-    public function submit_forgot_password(Request $request){
-
+    public function submit_forgot_password(Request $request)
+    {
         try {
             // Validate email input
             $request->validate([
                 'email' => 'required|email',
             ], [
                 'email.required' => 'Please enter an email!',
-                'email.email' => 'Please enter a valid email address !',
+                'email.email' => 'Please enter a valid email address!',
             ]);
 
             $email = $request->input('email');
@@ -567,7 +567,7 @@ class UserController extends Controller
             if (!$existsInAdmins && !$existsInUsers) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'The email doesn\'t exist in our database !',
+                    'message' => 'The email doesn\'t exist in our database!',
                 ], 404); // Not Found
             }
 
@@ -577,25 +577,33 @@ class UserController extends Controller
             // Generate a new reset code
             $data = [
                 'email' => $email,
-                'code' => mt_rand(100000, 999999),
+                'code'  => mt_rand(100000, 999999),
             ];
 
             // Create a new reset code record
             $reset_data = ResetCodePassword::create($data);
 
-            // Send reset code via email
-            Mail::to($email)->send(new SendCodeResetPasswordMail($reset_data->email, $reset_data->code));
+            // Render Blade template to HTML
+            $html = view('emails.send-code-reset-password', ['code' => $reset_data->code])->render();
+
+            // Send reset code via SendGrid
+            SendGridService::send(
+                $reset_data->email,
+                'Reset password',
+                $html
+            );
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'A reset code has been sent to your email.',
             ], 200); // OK
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Handle validation exceptions
             return response()->json([
-                'status' => 'error',
-                'message' => 'Validation errors occurr.',
-                'errors' => $e->errors(),
+                'status'  => 'error',
+                'message' => 'Validation errors occurred.',
+                'errors'  => $e->errors(),
             ], 422); // Unprocessable Entity
         } catch (\Exception $e) {
             // Log the error for debugging
@@ -603,11 +611,12 @@ class UserController extends Controller
 
             // Handle any other exceptions
             return response()->json([
-                'status' => 'error',
+                'status'  => 'error',
                 'message' => 'An error occurred while processing your request. ' . $e->getMessage(),
             ], 500); // Internal Server Error
         }
     }
+
 
     public function code_to_reset_pswd(Request $request, $email){
 
